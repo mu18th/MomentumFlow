@@ -1,100 +1,89 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="initial-scale=1, width=device-width">
-    <link rel="stylesheet" href="../static/css/style.css">
+{% extends "layout.html" %}
 
-    <title>Smart Task Manager</title>
-</head>
-<body>
-    <header>
-        <h1>Smart Task Manager</h1>
-    </header>
+{% block body %}
+        <header>
+            <h1>Smart Task Manager</h1>
+        </header>
 
-    <nav aria-label="Main navigation">
-        <!-- Navigation links will go here -->
-    </nav>
+        <nav aria-label="Main navigation">
+            <!-- Navigation links will go here -->
+        </nav>
+        <main>
+            <!-- aria-labelledbys for headers are gpt suggession-->
+            <section id="add-task-form" aria-labelledby="add-task-heading">
+                <h2 id="add-task-heading">Add Task</h2>
+                <form>
+                    <label for="task-title">Task Title</label>
+                    <input autocomplete="off" autofocus name="task" type="text" id="task-title" placeholder="e.g. Build CS50x final project" required>
 
-    <!-- aria-labelledbys for headers are gpt suggession-->
-    <section id="add-task-form" aria-labelledby="add-task-heading">
-        <h2 id="add-task-heading">Add Task</h2>
-        <form>
-            <label for="task-title">Task Title</label>
-            <input autocomplete="off" autofocus name="task" type="text" id="task-title" placeholder="e.g. Build CS50x final project" required>
+                    <label for="task-desc">Task Description</label>
+                    <textarea name="description" id="task-desc" placeholder="Optional: describe the task"></textarea>
 
-            <label for="task-desc">Task Description</label>
-            <textarea name="description" id="task-desc" placeholder="Optional: describe the task"></textarea>
-
-            <label for="task-priority">Priority</label>
-            <select name="priority" id="task-priority" required>
-                <option value="low">Low Priority</option>
-                <option value="medium">Medium Priority</option>
-                <option value="high">High Priority</option>
-            </select>
-            <button type="submit">Add Task</button>
-        </form>
-    </section>
+                    <label for="task-priority">Priority</label>
+                    <select name="priority" id="task-priority" required>
+                        <option value="low">Low Priority</option>
+                        <option value="medium">Medium Priority</option>
+                        <option value="high">High Priority</option>
+                    </select>
+                    <button type="submit">Add Task</button>
+                </form>
+            </section>
 
 
-    <section id="kanban-board">
-        <section id="todo-column" aria-labelledby="todo-heading">
-            <h2 id="todo-heading">To Do</h2>
-            <ol id="todo-list">
-                <li>
-                    <div>
-                        <h3>Learn JS</h3>
-                        <p>desc</p>
-                    </div>
-                </li>
-                <li>
-                    <div>
-                        <h3>Learn how to involve AI in the project</h3>
-                        <p>desc</p>
-                    </div>
-                </li>
-                <li>
-                    <div>
-                        <h3>Submit the task</h3>
-                        <p>desc</p>
-                    </div>
-                </li>
-            </ol>
-        </section>
+            <section id="kanban-board">
+                <section id="todo-column" aria-labelledby="todo-heading">
+                    <h2 id="todo-heading">To Do</h2>
+                    <ol id="todo-list">
+                        <li>
+                            <div>
+                                <h3>Learn JS</h3>
+                                <p>desc</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div>
+                                <h3>Learn how to involve AI in the project</h3>
+                                <p>desc</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div>
+                                <h3>Submit the task</h3>
+                                <p>desc</p>
+                            </div>
+                        </li>
+                    </ol>
+                </section>
 
-        <section id="in-progress-column"  aria-labelledby="in-progress-heading">
-            <h2 id="in-progress-heading">In Progress</h2>
-            <ol id="in-progress-list">
-                <li>
-                    <div>
-                        <h3>Week 1</h3>
-                        <p>desc</p>
-                    </div>
-                </li>
-                <li>
-                    <div>
-                        <h3>CSS style</h3>
-                        <p>desc</p>
-                    </div>
-                </li>
-            </ol>
-        </section>
+                <section id="in-progress-column"  aria-labelledby="in-progress-heading">
+                    <h2 id="in-progress-heading">In Progress</h2>
+                    <ol id="in-progress-list">
+                        <li>
+                            <div>
+                                <h3>Week 1</h3>
+                                <p>desc</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div>
+                                <h3>CSS style</h3>
+                                <p>desc</p>
+                            </div>
+                        </li>
+                    </ol>
+                </section>
 
-        <section id="done-column" aria-labelledby="done-heading">
-            <h2 id="done-heading">Done</h2>
-            <ol id="done-list">
-                <li>
-                    <div>
-                        <h3>HTML skeleton</h3>
-                        <p>desc</p>
-                    </div>
-                </li>
-            </ol>
-        </section>
-    </section>
-
-    <footer>
-        &copy; 2025 Muath Alyoubi
-    </footer>
-</body>
-</html>
+                <section id="done-column" aria-labelledby="done-heading">
+                    <h2 id="done-heading">Done</h2>
+                    <ol id="done-list">
+                        <li>
+                            <div>
+                                <h3>HTML skeleton</h3>
+                                <p>desc</p>
+                            </div>
+                        </li>
+                    </ol>
+                </section>
+            </section>
+        </main>
+{% endblock %}
