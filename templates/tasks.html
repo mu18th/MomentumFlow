@@ -1,7 +1,21 @@
 {% extends "layout.html" %}
 
+{% block title %}
+    Tasks
+{% endblock %}
+
 {% block body %}
-    {% for task in tasks %}
-        <p>{{ task }}</p>
-    {% endfor %}
+    <header>
+            <h1>Smart Task Manager</h1>
+    </header>
+
+    <main>
+        <section id="tasks">
+            <ul>
+                {% for task in tasks %}
+                    <li>{{ task }}</li>
+                {% endfor %}
+            </ul>
+        </section>
+    </main>
 {% endblock %}
