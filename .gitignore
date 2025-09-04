@@ -1,0 +1,10 @@
+# Ignore Flask instance folder
+instance/
+
+# Ignore SQLite database files
+*.sqlite3
+*.db
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
