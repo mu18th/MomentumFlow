@@ -1,8 +1,11 @@
-from flask import Flask, render_template, request
+import sqlite3
+from flask import Flask, g, render_template, request, url_for
+from db import get_db, close_db
 
 from helpers import apology
 
 app = Flask(__name__)
+app.config["DATABASE"] = "instance/smart_kanban.db"
 
 @app.route("/")
 def index():
@@ -41,6 +44,12 @@ def addtask():
         return render_template("index.html")
     else:
         return render_template("addtask.html")
+
+
+#db related
+@app.teardown_appcontext
+def teardown_appcontext_db(exception):
+    close_db()
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="initial-scale=1, width=device-width">
-        <link rel="stylesheet" href="../static/css/style.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
         <title>Smart Task Manager: {% block title %}{% endblock %}</title>
     </head>
