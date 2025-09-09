@@ -12,7 +12,7 @@
     <main>
         <section id="add-task-form" aria-labelledby="add-task-heading">
                 <h2 id="add-task-heading">Add Task</h2>
-                <form action="{{ url_for('add_task') }}" method="post">
+                <form action="addtask" method="post">
                     <label for="task-title">Task Title</label>
                     <input autocomplete="off" autofocus name="task" type="text" id="task-title" placeholder="e.g. Build CS50x final project" required>
 
@@ -26,9 +26,9 @@
                         <option value="high">High Priority</option>
                     </select>
 
-                    <select name="type" id="task-type" required>
-                        <option value="To-Do">To Do</option>
-                        <option value="In-Progress">In Progress</option>
+                    <select name="status" id="task-status" required>
+                        <option value="To Do">To Do</option>
+                        <option value="In Progress">In Progress</option>
                         <option value="Done">Done</option>
                     </select>
                     <button type="submit">Add Task</button>

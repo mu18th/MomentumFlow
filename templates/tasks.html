@@ -13,7 +13,8 @@
         <section id="tasks">
             <ul>
                 {% for task in tasks %}
-                    <li>{{ task }}</li>
+                    <li>{{ task.title }}</li>
+                    <li>{{ task.status }}</li>
                 {% endfor %}
             </ul>
         </section>

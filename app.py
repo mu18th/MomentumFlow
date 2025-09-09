@@ -1,5 +1,5 @@
 import sqlite3
-from flask import Flask, g, render_template, request, url_for
+from flask import Flask, g, render_template, request, url_for, redirect
 from db import get_db, close_db
 
 from helpers import apology
@@ -7,17 +7,24 @@ from helpers import apology
 app = Flask(__name__)
 app.config["DATABASE"] = "instance/smart_kanban.db"
 
+with app.app_context():
+    db = get_db()
+
+    db.commit()
+
 @app.route("/")
 def index():
-    return render_template("index.html")
+    tasks = db.execute("SELECT * FROM tasks WHERE user_id = ?", (1,)).fetchall()
+    return render_template("index.html", tasks=tasks)
 
 @app.route("/about")
 def about():
+    
     return render_template("about.html")
 
 @app.route("/tasks")
 def tasks():
-    tasks = ["x", "y", "z"]
+    tasks = db.execute("SELECT * FROM tasks WHERE user_id = ?", (1,))
     return render_template("tasks.html", tasks=tasks)
 
 @app.route("/addtask",  methods=["GET", "POST"])
@@ -35,13 +42,15 @@ def addtask():
         if not priority:
             return apology("must spacify priority", 400)
         
-        type= request.form.get("type")
-        if not type:
+        status= request.form.get("status")
+        if not status:
             return apology("must spacify type", 400)
         
-        #to complete storing
+        db.execute("INSERT INTO tasks (title, user_id, description, priority, status) VALUES (?, ?, ?, ?, ?)", 
+                   (task, 1, description, priority, status))
+        db.commit()
 
-        return render_template("index.html")
+        return redirect("/")
     else:
         return render_template("addtask.html")
 
