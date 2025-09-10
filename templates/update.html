@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Tasks
+{% endblock %}
+
+{% block body %}
+    <header>
+            <h1>Update Task Status</h1>
+    </header>
+
+    <main>
+        <section id="add-task-form" aria-labelledby="add-task-heading">
+            <h2 id="add-task-heading">Add Task</h2>
+            <form action="update-status" method="post">
+                <label for="taskID">Task Title</label>
+                <input autocomplete="off" autofocus name="taskID" type="text" id="taskID"
+                    placeholder="1" required>
+
+                <select name="status" id="task-status" required>
+                    <option value="To Do">To Do</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Done">Done</option>
+                </select>
+                <button type="submit">Update Task Status</button>
+            </form>
+        </section>
+    </main>
+{% endblock %}

@@ -7,10 +7,15 @@ from helpers import apology
 app = Flask(__name__)
 app.config["DATABASE"] = "instance/smart_kanban.db"
 
+#db related
 with app.app_context():
     db = get_db()
 
     db.commit()
+    
+@app.teardown_appcontext
+def teardown_appcontext_db(exception):
+    close_db()
 
 @app.route("/")
 def index():
@@ -42,9 +47,9 @@ def addtask():
         if not priority:
             return apology("must spacify priority", 400)
         
-        status= request.form.get("status")
+        status = request.form.get("status")
         if not status:
-            return apology("must spacify type", 400)
+            return apology("must spacify status", 400)
         
         db.execute("INSERT INTO tasks (title, user_id, description, priority, status) VALUES (?, ?, ?, ?, ?)", 
                    (task, 1, description, priority, status))
@@ -55,10 +60,39 @@ def addtask():
         return render_template("addtask.html")
 
 
-#db related
-@app.teardown_appcontext
-def teardown_appcontext_db(exception):
-    close_db()
+@app.route("/update-status",  methods=["GET", "POST"])
+def updateTask():
+    if request.method == "POST":
+        id = request.form.get("taskID")
+    
+        if not id:
+            return apology("must provide ID", 400)
+        
+        status = request.form.get("status")
+        if not status:
+            return apology("must spacify status", 400)
+        
+        db.execute("UPDATE tasks SET status = ? WHERE id = ?", (status, id))
+        db.commit()
+        
+        return redirect("/") 
+    else:
+        return render_template("update.html")
+    
+@app.route("/delete-task",  methods=["GET", "POST"])
+def deleteTask():
+    if request.method == "POST":
+        id = request.form.get("taskID")
+
+        if not id:
+            return apology("must provide ID", 400)
+    
+        db.execute("DELETE FROM tasks WHERE id = ?", (id,))
+        db.commit()
+
+        return redirect("/")
+    else:
+        return render_template("delete.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
