@@ -14,16 +14,16 @@
         </nav>
         <main>
             <section id="kanban-board">
-                <section id="todo-column" aria-labelledby="todo-heading">
+                <section id="todo-column" aria-labelledby="todo-heading" >
                     <h2 id="todo-heading">To Do</h2>
-                    <ol id="todo-list">
+                    <ol class = "task-list" id="todo-list">
+                        <!-- empty cell to enable drag and drop -->
+                        <li style="background-color: #FFFFE0"></li>
                         {% for task in tasks %}
                             {% if task.status == 'To Do' %}
-                                <li>
-                                    <div>
-                                            <h3>{{ task.title }}</h3>
-                                            <p>{{ task.description }}</p>
-                                    </div>
+                                <li id="task-{{ task.id }}" draggable="true">
+                                    <h3>{{ task.title }}</h3>
+                                    <p>{{ task.description }}</p>
                                 </li>
                             {% endif %}
                         {% endfor %}
@@ -32,14 +32,14 @@
 
                 <section id="in-progress-column"  aria-labelledby="in-progress-heading">
                     <h2 id="in-progress-heading">In Progress</h2>
-                    <ol id="in-progress-list">
+                    <ol class = "task-list" id="in-progress-list">
+                        <!-- empty cell to enable drag and drop -->
+                        <li style="background-color: #E0FFFF"></li>
                         {% for task in tasks %}
                             {% if task.status == 'In Progress' %}
-                                <li>
-                                    <div>
-                                            <h3>{{ task.title }}</h3>
-                                            <p>{{ task.description }}</p>
-                                    </div>
+                                <li id="task-{{ task.id }}" draggable="true">
+                                    <h3>{{ task.title }}</h3>
+                                    <p>{{ task.description }}</p>
                                 </li>
                             {% endif %}
                         {% endfor %}
@@ -48,14 +48,14 @@
 
                 <section id="done-column" aria-labelledby="done-heading">
                     <h2 id="done-heading">Done</h2>
-                    <ol id="done-list">
+                    <ol class = "task-list" id="done-list">
+                        <!-- empty cell to enable drag and drop -->
+                        <li style="background-color: #E0FFE0"></li>
                         {% for task in tasks %}
                             {% if task.status == 'Done' %}
-                                <li>
-                                    <div>
-                                            <h3>{{ task.title }}</h3>
-                                            <p>{{ task.description }}</p>
-                                    </div>
+                                <li id="task-{{ task.id }}" draggable="true">
+                                    <h3>{{ task.title }}</h3>
+                                    <p>{{ task.description }}</p>
                                 </li>
                             {% endif %}
                         {% endfor %}
@@ -63,4 +63,37 @@
                 </section>
             </section>
         </main>
+
+        <script>
+            const draggableTasks = document.querySelectorAll("[draggable='true']");
+
+            //drag tasks
+            draggableTasks.forEach(task => {
+                task.addEventListener("dragstart", e => {
+                    e.dataTransfer.setData("text/plain", task.id);
+                });
+            });
+
+            //drop tasks
+            const taskLists = document.querySelectorAll(".task-list");
+            taskLists.forEach(taskList => {
+                taskList.addEventListener("dragover", e => {
+                    e.preventDefault();
+                    taskList.classList.add("task-list--over");
+                });
+
+                taskList.addEventListener("dragleave", e => {
+                    taskList.classList.remove("task-list--over");
+                })
+
+                taskList.addEventListener("drop", e => {
+                    e.preventDefault();
+                    const droppedTaskId = e.dataTransfer.getData("text/plain");
+                    const droppedTask = document.getElementById(droppedTaskId);
+                    
+                    taskList.appendChild(droppedTask);      
+                    taskList.classList.remove("task-list--over");
+                });
+            });
+        </script>
 {% endblock %}
