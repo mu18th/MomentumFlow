@@ -1,7 +1,8 @@
 import sqlite3
-from flask import Flask, g, render_template, request, url_for, redirect
+from flask import Flask, g, render_template, request, redirect, jsonify, make_response
 from db import get_db, close_db
 
+import json
 from helpers import apology
 
 app = Flask(__name__)
@@ -60,7 +61,7 @@ def addtask():
         return render_template("addtask.html")
 
 
-@app.route("/update-status",  methods=["GET", "POST"])
+"""@app.route("/update-status",  methods=["GET", "POST"])
 def updateTask():
     if request.method == "POST":
         id = request.form.get("taskID")
@@ -77,7 +78,7 @@ def updateTask():
         
         return redirect("/") 
     else:
-        return render_template("update.html")
+        return render_template("update.html")"""
     
 @app.route("/delete-task",  methods=["GET", "POST"])
 def deleteTask():
@@ -94,5 +95,25 @@ def deleteTask():
     else:
         return render_template("delete.html")
 
+
+#to update drag and drop
+@app.route("/update-status",  methods=["POST"])
+def updateTask():
+    
+    req = request.get_json()
+
+    id = int(req.get("taskID"))
+    if not id:
+        return apology("must provide ID", 400)
+        
+    status = req.get("status")
+    if not status:
+        return jsonify({"message": "not updated"}) , 400
+        
+    db.execute("UPDATE tasks SET status = ? WHERE id = ?", (status, id))
+    db.commit()
+        
+    return jsonify({"taskID": id, "status": status, "message": "updated"}), 200
+    
 if __name__ == "__main__":
     app.run(debug=True)

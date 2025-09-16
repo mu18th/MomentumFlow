@@ -16,7 +16,7 @@
             <section id="kanban-board">
                 <section id="todo-column" aria-labelledby="todo-heading" >
                     <h2 id="todo-heading">To Do</h2>
-                    <ol class = "task-list" id="todo-list">
+                    <ol class = "task-list" id="To Do">
                         <!-- empty cell to enable drag and drop -->
                         <li style="background-color: #FFFFE0"></li>
                         {% for task in tasks %}
@@ -32,7 +32,7 @@
 
                 <section id="in-progress-column"  aria-labelledby="in-progress-heading">
                     <h2 id="in-progress-heading">In Progress</h2>
-                    <ol class = "task-list" id="in-progress-list">
+                    <ol class = "task-list" id="In Progress">
                         <!-- empty cell to enable drag and drop -->
                         <li style="background-color: #E0FFFF"></li>
                         {% for task in tasks %}
@@ -48,7 +48,7 @@
 
                 <section id="done-column" aria-labelledby="done-heading">
                     <h2 id="done-heading">Done</h2>
-                    <ol class = "task-list" id="done-list">
+                    <ol class = "task-list" id="Done">
                         <!-- empty cell to enable drag and drop -->
                         <li style="background-color: #E0FFE0"></li>
                         {% for task in tasks %}
@@ -93,6 +93,36 @@
                     
                     taskList.appendChild(droppedTask);      
                     taskList.classList.remove("task-list--over");
+                    
+                    var entry = {
+                        taskID: droppedTask.id.replace("task-", ""),
+                        status: taskList.id
+                    };
+
+                    console.log(entry);
+
+                    fetch(`${window.location.origin}/update-status`, {
+                        method: "POST",
+                        credentials: "include",
+                        body: JSON.stringify(entry),
+                        cache: "no-cache",
+                        headers: new Headers({
+                            "content-type": "application/json"
+                        })
+                    })
+                    .then(response => {
+
+                        if (response.status !== 200) {
+                            
+                            console.log(`Response status  was not 200 ${response.status}`);
+                            return;
+                        }
+                        return response.json();
+                    })
+                    .then(data =>  {
+                        console.log(data);
+                     })
+                    .catch(err => console.error("Fetch error:", err));
                 });
             });
         </script>
