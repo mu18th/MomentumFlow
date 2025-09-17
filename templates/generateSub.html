@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Tasks
+{% endblock %}
+
+{% block body %}
+    <header>
+            <h1>Update Task Status</h1>
+    </header>
+
+    <main>
+        <section id="add-task-form" aria-labelledby="add-task-heading">
+            <h2 id="add-task-heading">Generate Subtasks</h2>
+            <form action="/generate_subtasks" method="post">
+                <label for="taskID">Generate SubTask</label>
+                <input autocomplete="off" autofocus name="taskID" type="text" id="taskID"
+                    placeholder="1" required>
+                <button type="submit">Generate SubTask</button>
+            </form>
+        </section>
+    </main>
+{% endblock %}

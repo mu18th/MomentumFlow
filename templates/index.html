@@ -21,9 +21,12 @@
                         <li style="background-color: #FFFFE0"></li>
                         {% for task in tasks %}
                             {% if task.status == 'To Do' %}
-                                <li id="task-{{ task.id }}" draggable="true">
-                                    <h3>{{ task.title }}</h3>
+                                <li id="{{ task.id }}" draggable="true">
+                                    <h3>({{ task.id }}) {{ task.title }} </h3>
                                     <p>{{ task.description }}</p>
+                                    <button onclick="generateTask('{{ task.id}}')" id="sub-task">Generate 3 Subtasks</button>
+                                    <br>
+                                    <button onclick="deleteTask('{{ task.id }}')" id="sub-task">Delete Task</button>
                                 </li>
                             {% endif %}
                         {% endfor %}
@@ -37,9 +40,12 @@
                         <li style="background-color: #E0FFFF"></li>
                         {% for task in tasks %}
                             {% if task.status == 'In Progress' %}
-                                <li id="task-{{ task.id }}" draggable="true">
-                                    <h3>{{ task.title }}</h3>
+                                <li id="{{ task.id }}" draggable="true">
+                                    <h3>({{ task.id }}) {{ task.title }} </h3>
                                     <p>{{ task.description }}</p>
+                                    <button onclick="generateTask('{{ task.id}}')" id="sub-task">Generate 3 Subtasks</button>
+                                    <br>
+                                    <button onclick="deleteTask('{{ task.id}}')" id="sub-task">Delete Task</button>
                                 </li>
                             {% endif %}
                         {% endfor %}
@@ -53,9 +59,12 @@
                         <li style="background-color: #E0FFE0"></li>
                         {% for task in tasks %}
                             {% if task.status == 'Done' %}
-                                <li id="task-{{ task.id }}" draggable="true">
-                                    <h3>{{ task.title }}</h3>
+                                <li id="{{ task.id }}" draggable="true">
+                                    <h3>({{ task.id }}) {{ task.title }} </h3>
                                     <p>{{ task.description }}</p>
+                                    <button onclick="generateTask('{{ task.id}}')" id="sub-task">Generate 3 Subtasks</button>
+                                    <br>
+                                    <button onclick="deleteTask('{{ task.id }}')" id="sub-task">Delete Task</button>                            
                                 </li>
                             {% endif %}
                         {% endfor %}
@@ -95,7 +104,7 @@
                     taskList.classList.remove("task-list--over");
                     
                     var entry = {
-                        taskID: droppedTask.id.replace("task-", ""),
+                        taskID: droppedTask.id,
                         status: taskList.id
                     };
 
@@ -125,5 +134,65 @@
                     .catch(err => console.error("Fetch error:", err));
                 });
             });
+
+            function generateTask(id) {
+                var entry = {
+                        taskID: id
+                    };
+
+                fetch(`${window.location.origin}/generate_subtasks`, {
+                        method: "POST",
+                        credentials: "include",
+                        body: JSON.stringify(entry),
+                        cache: "no-cache",
+                        headers: new Headers({
+                            "content-type": "application/json"
+                        })
+                    })
+                    .then(response => {
+
+                        if (response.status !== 200) {
+                            
+                            console.log(`Response status  was not 200 ${response.status}`);
+                            return;
+                        }
+                        return response.json();
+                    })
+                    .then(data =>  {
+                        console.log(data);
+                        alert("Subtasks generated. Please refresh the page to see them.");
+                     })
+                    .catch(err => console.error("Fetch error:", err));
+            }
+
+            function deleteTask(id) {
+                var entry = {
+                        taskID: id
+                    };
+
+                fetch(`${window.location.origin}/delete-task`, {
+                        method: "POST",
+                        credentials: "include",
+                        body: JSON.stringify(entry),
+                        cache: "no-cache",
+                        headers: new Headers({
+                            "content-type": "application/json"
+                        })
+                    })
+                    .then(response => {
+
+                        if (response.status !== 200) {
+                            
+                            console.log(`Response status  was not 200 ${response.status}`);
+                            return;
+                        }
+                        return response.json();
+                    })
+                    .then(data =>  {
+                        console.log(data);
+                        alert("Task deleted. Please refresh the page to see the changes.");
+                     })
+                    .catch(err => console.error("Fetch error:", err));
+            }
         </script>
 {% endblock %}

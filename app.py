@@ -2,7 +2,7 @@ import sqlite3
 from flask import Flask, g, render_template, request, redirect, jsonify, make_response
 from db import get_db, close_db
 
-import json
+from kanbanAI import generate_subtasks
 from helpers import apology
 
 app = Flask(__name__)
@@ -30,7 +30,7 @@ def about():
 
 @app.route("/tasks")
 def tasks():
-    tasks = db.execute("SELECT * FROM tasks WHERE user_id = ?", (1,))
+    tasks = db.execute("SELECT * FROM tasks WHERE user_id = ? ORDERED BY priority", (1,))
     return render_template("tasks.html", tasks=tasks)
 
 @app.route("/addtask",  methods=["GET", "POST"])
@@ -80,7 +80,7 @@ def updateTask():
     else:
         return render_template("update.html")"""
     
-@app.route("/delete-task",  methods=["GET", "POST"])
+"""@app.route("/delete-task",  methods=["GET", "POST"])
 def deleteTask():
     if request.method == "POST":
         id = request.form.get("taskID")
@@ -93,20 +93,33 @@ def deleteTask():
 
         return redirect("/")
     else:
-        return render_template("delete.html")
+        return render_template("delete.html")"""
+
+@app.route("/delete-task",  methods=["POST"])
+def deleteTask():
+    task = request.get_json()
+
+    id = int(task.get("taskID"))
+    if not id:
+        return jsonify({"message": "not valid ID"}) , 400
+    
+    db.execute("DELETE FROM tasks WHERE user_id = ? AND id = ?", (1,id))
+    db.commit()
+    
+    return jsonify({"taskID": id, "message": "updated"}), 200
 
 
 #to update drag and drop
 @app.route("/update-status",  methods=["POST"])
 def updateTask():
     
-    req = request.get_json()
+    task = request.get_json()
 
-    id = int(req.get("taskID"))
+    id = int(task.get("taskID"))
     if not id:
-        return apology("must provide ID", 400)
+        return jsonify({"message": "not updated"}) , 400
         
-    status = req.get("status")
+    status = task.get("status")
     if not status:
         return jsonify({"message": "not updated"}) , 400
         
@@ -115,5 +128,26 @@ def updateTask():
         
     return jsonify({"taskID": id, "status": status, "message": "updated"}), 200
     
+
+#AI subtasks
+@app.route("/generate_subtasks", methods=["GET", "POST"])
+def generateSubtasks():
+    
+    task = request.get_json()
+
+    id = int(task.get("taskID"))
+    if not id:
+        return jsonify({"message": "not valid ID"}) , 400
+    
+    title, description, status, priority = db.execute("SELECT title, description, status, priority FROM tasks WHERE id = ?", (id,)).fetchone()
+    
+    subtasks = generate_subtasks(title, description)
+    for t in subtasks:
+        db.execute("INSERT INTO tasks (user_id, fatherTask, title, status, priority, description) VALUES (?, ?, ?, ?, ?, ?)", 
+                   (1, title, t, status, priority, "Subtask of: " + title))
+        db.commit()
+    
+    return jsonify({"taskID": id, "message": "updated"}), 200
+
 if __name__ == "__main__":
     app.run(debug=True)
