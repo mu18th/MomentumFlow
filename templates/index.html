@@ -22,7 +22,7 @@
                         {% for task in tasks %}
                             {% if task.status == 'To Do' %}
                                 <li id="{{ task.id }}" draggable="true">
-                                    <h3>({{ task.id }}) {{ task.title }} </h3>
+                                    <h3>{{ task.title }}</h3>
                                     <p>{{ task.description }}</p>
                                     <button onclick="generateTask('{{ task.id}}')" id="sub-task">Generate 3 Subtasks</button>
                                     <br>
@@ -41,7 +41,7 @@
                         {% for task in tasks %}
                             {% if task.status == 'In Progress' %}
                                 <li id="{{ task.id }}" draggable="true">
-                                    <h3>({{ task.id }}) {{ task.title }} </h3>
+                                    <h3>{{ task.title }}</h3>
                                     <p>{{ task.description }}</p>
                                     <button onclick="generateTask('{{ task.id}}')" id="sub-task">Generate 3 Subtasks</button>
                                     <br>
@@ -60,7 +60,7 @@
                         {% for task in tasks %}
                             {% if task.status == 'Done' %}
                                 <li id="{{ task.id }}" draggable="true">
-                                    <h3>({{ task.id }}) {{ task.title }} </h3>
+                                    <h3>{{ task.title }}</h3>
                                     <p>{{ task.description }}</p>
                                     <button onclick="generateTask('{{ task.id}}')" id="sub-task">Generate 3 Subtasks</button>
                                     <br>

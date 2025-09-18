@@ -142,9 +142,13 @@ def generateSubtasks():
     title, description, status, priority = db.execute("SELECT title, description, status, priority FROM tasks WHERE id = ?", (id,)).fetchone()
     
     subtasks = generate_subtasks(title, description)
+
+    if subtasks == "Error":
+        return jsonify({"message": "could not generate tasks"}) , 400
+    
     for t in subtasks:
         db.execute("INSERT INTO tasks (user_id, fatherTask, title, status, priority, description) VALUES (?, ?, ?, ?, ?, ?)", 
-                   (1, title, t, status, priority, "Subtask of: " + title))
+                   (1, title, "Subtask of: " + title, status, priority, t))
         db.commit()
     
     return jsonify({"taskID": id, "message": "updated"}), 200

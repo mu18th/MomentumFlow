@@ -4,6 +4,8 @@ from openai import OpenAI
 
 load_dotenv()
 
+api_key = os.getenv("OPENROUTER_API_KEY")
+
 def generate_subtasks(title: str, description: str) -> list[str]:
 
     # prompt for the AI
@@ -14,7 +16,7 @@ def generate_subtasks(title: str, description: str) -> list[str]:
     Main Task Title = {title}
     Main Task Description = {description if description else "No description provided"}
     
-    Format:
+    Format: 
     (1) ...
     (2) ...
     (3) ...
@@ -24,7 +26,7 @@ def generate_subtasks(title: str, description: str) -> list[str]:
     try:
         client = OpenAI(
         base_url = "https://openrouter.ai/api/v1",
-        api_key = os.getenv("DEEPSEEK_API_KEY"),
+        api_key = api_key,
         )
         response = client.chat.completions.create(
             model="deepseek/deepseek-r1:free",
@@ -44,7 +46,8 @@ def generate_subtasks(title: str, description: str) -> list[str]:
         return subtasks  
 
     except Exception as e:
-        return [f"Error: {e}"]
+        print(e)
+        return "Error"
 
 # test
 if __name__ == "__main__":
