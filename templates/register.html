@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Register
+{% endblock %}
+
+{% block body %}
+    <header>
+        <h1>Register</h1>
+    </header>
+
+    <main>
+        <section id="form" aria-labelledby="add-task-heading">
+            <h2 id="add-task-heading">Register</h2>
+            <form action="/register" method="post">
+                <label for="username">User Name</label>
+                <input autocomplete="off" autofocus name="username" type="text" id="username"
+                    placeholder="" required>
+                
+                <label for="email">Email</label>
+                <input autocomplete="off" autofocus name="email" type="email" id="email"
+                    placeholder="" required>
+                
+                <label for="password">Password</label>
+                <input autocomplete="off" autofocus name="password" type="text" id="password"
+                    placeholder="" required>
+
+                <label for="confirmation">confirme Password</label>
+                <input autocomplete="off" autofocus name="confirmation" type="text" id="confirmation"
+                    placeholder="" required>
+
+                <button type="submit">Register</button>
+            </form>
+        </section>
+    </main>
+{% endblock %}

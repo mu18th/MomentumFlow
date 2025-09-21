@@ -4,8 +4,6 @@ from openai import OpenAI
 
 load_dotenv()
 
-api_key = os.getenv("OPENROUTER_API_KEY")
-
 def generate_subtasks(title: str, description: str) -> list[str]:
 
     # prompt for the AI
@@ -26,10 +24,10 @@ def generate_subtasks(title: str, description: str) -> list[str]:
     try:
         client = OpenAI(
         base_url = "https://openrouter.ai/api/v1",
-        api_key = api_key,
+        api_key = os.getenv("OPENROUTER_API_KEY"),
         )
         response = client.chat.completions.create(
-            model="deepseek/deepseek-r1:free",
+            model="deepseek/deepseek-chat-v3.1:free",
             messages=[
                 {"role": "system", "content": "You are a helpful AI project manager."},
                 {"role": "user", "content": prompt}

@@ -130,7 +130,7 @@ def updateTask():
     
 
 #AI subtasks
-@app.route("/generate_subtasks", methods=["GET", "POST"])
+@app.route("/generate_subtasks", methods=["POST"])
 def generateSubtasks():
     
     task = request.get_json()
@@ -147,11 +147,37 @@ def generateSubtasks():
         return jsonify({"message": "could not generate tasks"}) , 400
     
     for t in subtasks:
-        db.execute("INSERT INTO tasks (user_id, fatherTask, title, status, priority, description) VALUES (?, ?, ?, ?, ?, ?)", 
-                   (1, title, "Subtask of: " + title, status, priority, t))
+        db.execute("INSERT INTO tasks (user_id, title, status, priority, description) VALUES (?, ?, ?, ?, ?)", 
+                   (1, "Subtask of: " + title, status, priority, t))
         db.commit()
     
     return jsonify({"taskID": id, "message": "updated"}), 200
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        user_name = request.form.get("username")
+        if not user_name:
+            return apology("must provide username", 400)
+        
+        email = request.form.get("email")
+        if not email:
+            return apology("must provide email", 400)
+        
+        password = request.form.get("password")
+        if not password:
+            return apology("must provide password", 400)
+        
+        confirmation = request.form.get("confirmation")
+        if not confirmation:
+            return apology("must provide password confirmation", 400)
+        
+        if password != confirmation:
+            return apology("passwords do not match", 400)
+        
+        return redirect("/")
+    else:
+        return render_template("register.html")
 
 if __name__ == "__main__":
     app.run(debug=True)

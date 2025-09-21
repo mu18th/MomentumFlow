@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-Tasks
+    Delete Task
 {% endblock %}
 
 {% block body %}
@@ -10,7 +10,7 @@ Tasks
     </header>
 
     <main>
-        <section id="add-task-form" aria-labelledby="add-task-heading">
+        <section id="form" aria-labelledby="add-task-heading">
             <h2 id="add-task-heading">Add Task</h2>
             <form action="delete-task" method="post">
                 <label for="taskID">Task Title</label>
