@@ -13,21 +13,17 @@
         <section id="form" aria-labelledby="add-task-heading">
             <h2 id="add-task-heading">Register</h2>
             <form action="/register" method="post">
-                <label for="username">User Name</label>
                 <input autocomplete="off" autofocus name="username" type="text" id="username"
-                    placeholder="" required>
+                    placeholder="username" required>
                 
-                <label for="email">Email</label>
                 <input autocomplete="off" autofocus name="email" type="email" id="email"
-                    placeholder="" required>
+                    placeholder="email" required>
                 
-                <label for="password">Password</label>
-                <input autocomplete="off" autofocus name="password" type="text" id="password"
-                    placeholder="" required>
+                <input autocomplete="off" autofocus name="password" type="text" id="password" 
+                    minlength="8" maxlength="20" placeholder="password" required>
 
-                <label for="confirmation">confirme Password</label>
                 <input autocomplete="off" autofocus name="confirmation" type="text" id="confirmation"
-                    placeholder="" required>
+                    minlength="8" maxlength="20" placeholder="confirme password" required>
 
                 <button type="submit">Register</button>
             </form>
