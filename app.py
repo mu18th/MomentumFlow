@@ -1,13 +1,18 @@
-from flask import Flask, g, render_template, request, redirect, jsonify, make_response
+from flask import Flask, g, render_template, request, redirect, jsonify, make_response, session
 from db import get_db, close_db
 from werkzeug.security import check_password_hash, generate_password_hash
 from kanbanAI import generate_subtasks
-from helpers import apology
+from helpers import apology, login_required
+from flask_session import Session
 
 # Configure application and database
 app = Flask(__name__)
-app.config["DATABASE"] = "instance/smart_kanban.db"
+#app.config["DATABASE"] = "instance/smart_kanban.db"
 
+# Configure session to use filesystem (instead of signed cookies)
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
 #db related routes
 with app.app_context():
@@ -22,8 +27,9 @@ def teardown_appcontext_db(exception):
 
 # index route
 @app.route("/")
+@login_required
 def index():
-    tasks = db.execute("SELECT * FROM tasks WHERE user_id = ?", (1,)).fetchall()
+    tasks = db.execute("SELECT * FROM tasks WHERE user_id = ?", (session["user_id"],)).fetchall()
     return render_template("index.html", tasks=tasks)
 
 
@@ -34,13 +40,15 @@ def about():
     return render_template("about.html")
 
 @app.route("/tasks")
+@login_required
 def tasks():
-    tasks = db.execute("SELECT * FROM tasks WHERE user_id = ? ORDERED BY priority", (1,))
+    tasks = db.execute("SELECT * FROM tasks WHERE user_id = ? ORDERED BY priority", (session["user_id"],))
     return render_template("tasks.html", tasks=tasks)
 
 
 #add task route
 @app.route("/addtask",  methods=["GET", "POST"])
+@login_required
 def addtask():
     if request.method == "POST":
         task = request.form.get("task")
@@ -60,7 +68,7 @@ def addtask():
             return apology("must spacify status", 400)
         
         db.execute("INSERT INTO tasks (title, user_id, description, priority, status) VALUES (?, ?, ?, ?, ?)", 
-                   (task, 1, description, priority, status))
+                   (task, session["user_id"], description, priority, status))
         db.commit()
 
         return redirect("/")
@@ -70,6 +78,7 @@ def addtask():
 
 #to delete drag and drop
 @app.route("/delete-task",  methods=["POST"])
+@login_required
 def deleteTask():
     task = request.get_json()
 
@@ -77,7 +86,7 @@ def deleteTask():
     if not id:
         return jsonify({"message": "not valid ID"}) , 400
     
-    db.execute("DELETE FROM tasks WHERE user_id = ? AND id = ?", (1,id))
+    db.execute("DELETE FROM tasks WHERE user_id = ? AND id = ?", (session["user_id"],id))
     db.commit()
     
     return jsonify({"taskID": id, "message": "updated"}), 200
@@ -85,6 +94,7 @@ def deleteTask():
 
 #to update drag and drop
 @app.route("/update-status",  methods=["POST"])
+@login_required
 def updateTask():
     
     task = request.get_json()
@@ -105,6 +115,7 @@ def updateTask():
 
 #AI subtasks
 @app.route("/generate_subtasks", methods=["POST"])
+@login_required
 def generateSubtasks():
     
     task = request.get_json()
@@ -113,7 +124,8 @@ def generateSubtasks():
     if not id:
         return jsonify({"message": "not valid ID"}) , 400
     
-    title, description, status, priority = db.execute("SELECT title, description, status, priority FROM tasks WHERE id = ?", (id,)).fetchone()
+    title, description, status, priority = db.execute("SELECT title, description, status, priority FROM tasks WHERE id = ?", 
+                                                      (id,)).fetchone()
     
     subtasks = generate_subtasks(title, description)
 
@@ -122,7 +134,7 @@ def generateSubtasks():
     
     for t in subtasks:
         db.execute("INSERT INTO tasks (user_id, title, status, priority, description) VALUES (?, ?, ?, ?, ?)", 
-                   (1, "Subtask of: " + title, status, priority, t))
+                   (session["user_id"], "Subtask of: " + title, status, priority, t))
         db.commit()
     
     return jsonify({"taskID": id, "message": "updated"}), 200
@@ -162,6 +174,39 @@ def register():
     else:
         return render_template("register.html")
 
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+
+    session.clear()
+
+    if request.method == "POST":
+        username = request.form.get("username")
+        if not username:
+            return apology("must provide username", 400)
+        
+        password = request.form.get("password")
+        if not password:
+            return apology("must provide password", 400)
+        
+        data = db.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchall()
+
+        if len(data) != 1 or not check_password_hash(data[0]["hash"], password):
+            return apology("invalid username and/or password", 400)
+        
+
+        session["user_id"] = data[0]["id"]
+        
+        return redirect("/")
+    else:
+        return render_template("login.html")
+    
+@app.route("/logout")
+def logout():
+
+    session.clear()
+
+    return redirect("/")
 
 if __name__ == "__main__":
     app.run(debug=True)

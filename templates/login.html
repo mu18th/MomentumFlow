@@ -6,29 +6,22 @@
 
 {% block body %}
     <header>
-        <h1>Register</h1>
-        <ul>
-            <li><a href="/login">Log In</a></li>
+        <h1>Log in</h1>
+            <li><a href="/register">Register</a></li>
         </ul>
     </header>
 
     <main>
         <section id="form" aria-labelledby="add-task-heading">
-            <h2 id="add-task-heading">Register</h2>
-            <form action="/register" method="post">
+            <h2 id="add-task-heading">Log In</h2>
+            <form action="/login" method="post">
                 <input autocomplete="off" autofocus name="username" type="text" id="username"
                     placeholder="username" required>
-                
-                <input autocomplete="off" autofocus name="email" type="email" id="email"
-                    placeholder="email" required>
                 
                 <input autocomplete="off" autofocus name="password" type="text" id="password" 
                     minlength="8" maxlength="20" placeholder="password" required>
 
-                <input autocomplete="off" autofocus name="confirmation" type="text" id="confirmation"
-                    minlength="8" maxlength="20" placeholder="confirme password" required>
-
-                <button type="submit">Register</button>
+                <button type="submit">Log In</button>
             </form>
         </section>
     </main>
