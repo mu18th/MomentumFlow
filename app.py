@@ -1,13 +1,12 @@
-from flask import Flask, g, render_template, request, redirect, jsonify, make_response, session
+from flask import Flask, g, render_template, request, redirect, jsonify, url_for, make_response, session, flash
 from db import get_db, close_db
 from werkzeug.security import check_password_hash, generate_password_hash
 from kanbanAI import generate_subtasks
 from helpers import apology, login_required
 from flask_session import Session
 
-# Configure application and database
+# Configure application
 app = Flask(__name__)
-#app.config["DATABASE"] = "instance/smart_kanban.db"
 
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_PERMANENT"] = False
@@ -71,6 +70,7 @@ def addtask():
                    (task, session["user_id"], description, priority, status))
         db.commit()
 
+        flash("Task added!")
         return redirect("/")
     else:
         return render_template("addtask.html")
@@ -130,12 +130,14 @@ def generateSubtasks():
     subtasks = generate_subtasks(title, description)
 
     if subtasks == "Error":
+        flash("Error generating subtasks, please try again later.")
         return jsonify({"message": "could not generate tasks"}) , 400
     
     for t in subtasks:
         db.execute("INSERT INTO tasks (user_id, title, status, priority, description) VALUES (?, ?, ?, ?, ?)", 
                    (session["user_id"], "Subtask of: " + title, status, priority, t))
         db.commit()
+    
     
     return jsonify({"taskID": id, "message": "updated"}), 200
 
@@ -160,18 +162,22 @@ def register():
         if not confirmation:
             return apology("must provide password confirmation", 400)
         
+        
         if password != confirmation:
-            return apology("passwords do not match", 400)
+            return redirect(url_for("register", msg="passwords do not match"))
         
         try:
             db.execute("INSERT INTO users (username, email, hash) VALUES (?, ?, ?)", 
                     (username, email, generate_password_hash(password)))
             db.commit()
         except:
-            return apology("username or email already exists", 400)
+            return redirect(url_for("register", msg="username or email already exists"))
 
-        return redirect("/")
+        return redirect(url_for("login", msg="Registered! Please log in."))
     else:
+        msg = request.args.get("msg")
+        if msg:
+            flash(msg)
         return render_template("register.html")
 
 
@@ -192,13 +198,19 @@ def login():
         data = db.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchall()
 
         if len(data) != 1 or not check_password_hash(data[0]["hash"], password):
-            return apology("invalid username and/or password", 400)
+            return redirect(url_for("login", msg="Invalid username and/or password."))
         
 
         session["user_id"] = data[0]["id"]
-        
+        session["username"] = data[0]["username"]
+
+        flash("Logged in successfully.")    
         return redirect("/")
+    
     else:
+        msg = request.args.get("msg")
+        if msg:
+            flash(msg)
         return render_template("login.html")
     
 @app.route("/logout")
@@ -206,7 +218,9 @@ def logout():
 
     session.clear()
 
-    return redirect("/")
+    flash("Logged out successfully.")
+
+    return redirect(url_for("login", msg="You have been logged out"))
 
 if __name__ == "__main__":
     app.run(debug=True)
