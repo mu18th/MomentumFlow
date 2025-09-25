@@ -14,7 +14,7 @@
                 <h2 id="add-task-heading">Add Task</h2>
                 <form action="addtask" method="post">
                     <label for="task-title">Task Title</label>
-                    <input autocomplete="off" autofocus name="task" type="text" id="task-title" placeholder="e.g. Build CS50x final project" required>
+                    <input autocomplete="off" autofocus name="title" type="text" id="task-title" placeholder="e.g. Build CS50x final project" required>
 
                     <label for="task-desc">Task Description</label>
                     <textarea autocomplete="off" autofocus name="description" id="task-desc" placeholder="Optional: describe the task, more beneficial if you want AI to generate subtasks for you"></textarea>
@@ -31,6 +31,10 @@
                         <option value="In Progress">In Progress</option>
                         <option value="Done">Done</option>
                     </select>
+
+                    <label for="due-date">Task Title</label>
+                    <input autocomplete="off" autofocus name="due-date" type="date" id="due-date" placeholder="">
+                    
                     <button type="submit">Add Task</button>
                 </form>
             </section>

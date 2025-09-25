@@ -54,5 +54,50 @@ def init_db():
         print(f"An error occurred while initializing the database: {e}")
 
 
+def get_tasks_by_user(user_id):
+    db = get_db()
+    return db.execute("SELECT * FROM tasks WHERE user_id = ?", (user_id,)).fetchall()
+
+
+def get_task_by_id(task_id):
+    db = get_db()
+    return db.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchall()
+
+
+def add_task(title, user_id, description, status, priority, due_date):
+    db = get_db()
+    db.execute(
+        "INSERT INTO tasks (title, user_id, description, status, priority, due_date) VALUES (?, ?, ?, ?, ?, ?)",
+        (title, user_id, description, status, priority, due_date)
+    )
+    db.commit()
+
+
+def delete_task(user_id, task_id):
+    db = get_db()
+
+    db.execute("DELETE FROM tasks WHERE user_id = ? AND id = ?", (user_id, task_id))
+    db.commit()
+
+def update_task(status, task_id):
+    db = get_db()
+
+    db.execute("UPDATE tasks SET status = ? WHERE id = ?", (status, task_id))
+    db.commit()
+
+def register_user(username, email, password_hash):
+    db = get_db()
+    db.execute(
+        "INSERT INTO users (username, email, hash) VALUES (?, ?, ?)",
+        (username, email, password_hash)
+    )
+    db.commit()
+
+
+def get_user_by_username(username):
+    db = get_db()
+    return db.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchall()
+
 if __name__ == "__main__":
     init_db()
+

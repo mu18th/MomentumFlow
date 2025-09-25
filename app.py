@@ -1,5 +1,5 @@
 from flask import Flask, g, render_template, request, redirect, jsonify, url_for, make_response, session, flash
-from db import get_db, close_db
+from db import * 
 from werkzeug.security import check_password_hash, generate_password_hash
 from kanbanAI import generate_subtasks
 from helpers import apology, login_required
@@ -13,22 +13,11 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-#db related routes
-with app.app_context():
-    db = get_db()
-
-    db.commit()
-    
-@app.teardown_appcontext
-def teardown_appcontext_db(exception):
-    close_db()
-
-
 # index route
 @app.route("/")
 @login_required
 def index():
-    tasks = db.execute("SELECT * FROM tasks WHERE user_id = ?", (session["user_id"],)).fetchall()
+    tasks = get_tasks_by_user(session["user_id"])
     return render_template("index.html", tasks=tasks)
 
 
@@ -41,7 +30,7 @@ def about():
 @app.route("/tasks")
 @login_required
 def tasks():
-    tasks = db.execute("SELECT * FROM tasks WHERE user_id = ? ORDERED BY priority", (session["user_id"],))
+    tasks =  get_tasks_by_user(session["user_id"])
     return render_template("tasks.html", tasks=tasks)
 
 
@@ -50,8 +39,8 @@ def tasks():
 @login_required
 def addtask():
     if request.method == "POST":
-        task = request.form.get("task")
-        if not task:
+        title = request.form.get("title")
+        if not title:
             return apology("must provide task", 400)
         
         description = request.form.get("description")
@@ -66,9 +55,11 @@ def addtask():
         if not status:
             return apology("must spacify status", 400)
         
-        db.execute("INSERT INTO tasks (title, user_id, description, priority, status) VALUES (?, ?, ?, ?, ?)", 
-                   (task, session["user_id"], description, priority, status))
-        db.commit()
+        due_date = request.form.get("due_date")
+        if not due_date:
+            due_date = None
+        
+        add_task(title, session["user_id"], description, status, priority, due_date)
 
         flash("Task added!")
         return redirect("/")
@@ -86,8 +77,7 @@ def deleteTask():
     if not id:
         return jsonify({"message": "not valid ID"}) , 400
     
-    db.execute("DELETE FROM tasks WHERE user_id = ? AND id = ?", (session["user_id"],id))
-    db.commit()
+    delete_task(session["user_id"], id)
     
     return jsonify({"taskID": id, "message": "updated"}), 200
 
@@ -107,8 +97,7 @@ def updateTask():
     if not status:
         return jsonify({"message": "not updated"}) , 400
         
-    db.execute("UPDATE tasks SET status = ? WHERE id = ?", (status, id))
-    db.commit()
+    update_task(status, id)
         
     return jsonify({"taskID": id, "status": status, "message": "updated"}), 200
     
@@ -124,20 +113,19 @@ def generateSubtasks():
     if not id:
         return jsonify({"message": "not valid ID"}) , 400
     
-    title, description, status, priority = db.execute("SELECT title, description, status, priority FROM tasks WHERE id = ?", 
-                                                      (id,)).fetchone()
+    mainTask = get_task_by_id(id)
+    if len(mainTask) != 1:
+        return jsonify({"message": "not your task"}) , 400
     
-    subtasks = generate_subtasks(title, description)
+    subtasks = generate_subtasks(mainTask[0]["title"], mainTask[0]["description"])
 
     if subtasks == "Error":
         flash("Error generating subtasks, please try again later.")
         return jsonify({"message": "could not generate tasks"}) , 400
     
-    for t in subtasks:
-        db.execute("INSERT INTO tasks (user_id, title, status, priority, description) VALUES (?, ?, ?, ?, ?)", 
-                   (session["user_id"], "Subtask of: " + title, status, priority, t))
-        db.commit()
-    
+    for task in subtasks:
+        add_task("Subtask of: " + mainTask[0]["title"], session["user_id"], task,
+                  mainTask[0]["status"], mainTask[0]["priority"], None)
     
     return jsonify({"taskID": id, "message": "updated"}), 200
 
@@ -167,9 +155,7 @@ def register():
             return redirect(url_for("register", msg="passwords do not match"))
         
         try:
-            db.execute("INSERT INTO users (username, email, hash) VALUES (?, ?, ?)", 
-                    (username, email, generate_password_hash(password)))
-            db.commit()
+            register_user(username, email, generate_password_hash(password))
         except:
             return redirect(url_for("register", msg="username or email already exists"))
 
@@ -195,7 +181,7 @@ def login():
         if not password:
             return apology("must provide password", 400)
         
-        data = db.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchall()
+        data = get_user_by_username(username)
 
         if len(data) != 1 or not check_password_hash(data[0]["hash"], password):
             return redirect(url_for("login", msg="Invalid username and/or password."))
