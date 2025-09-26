@@ -1,5 +1,5 @@
 from flask import Flask, g, render_template, request, redirect, jsonify, url_for, make_response, session, flash
-from db import * 
+from db import *
 from werkzeug.security import check_password_hash, generate_password_hash
 from kanbanAI import generate_subtasks
 from helpers import apology, login_required
@@ -82,10 +82,10 @@ def deleteTask():
     return jsonify({"taskID": id, "message": "updated"}), 200
 
 
-#to update drag and drop
+# to update status by drag and drop
 @app.route("/update-status",  methods=["POST"])
 @login_required
-def updateTask():
+def updateTaskStatus():
     
     task = request.get_json()
 
@@ -97,10 +97,45 @@ def updateTask():
     if not status:
         return jsonify({"message": "not updated"}) , 400
         
-    update_task(status, id)
+    update_status(status, id)
         
     return jsonify({"taskID": id, "status": status, "message": "updated"}), 200
     
+
+@app.route("/<int:id>/edit", methods=["GET", "POST"])
+@login_required
+def editTask(id):
+    
+    if request.method == "POST":
+        title = request.form.get("title")
+        if not title:
+            return apology("must provide task", 400)
+        
+        description = request.form.get("description")
+        if not description:
+            description = ""
+        
+        priority = request.form.get("priority")
+        if not priority:
+            return apology("must spacify priority", 400)
+        
+        due_date = request.form.get("due_date")
+        if not due_date:
+            due_date = None
+
+        update_task(id, title, description, priority, due_date)        
+
+
+        flash("Task updated!")
+        return redirect("/")
+    else:
+        task = get_task_by_id(id)
+        if len(task) != 1:
+            return redirect(url_for("index", msg="not your task"))
+        
+        return render_template("edittask.html", task=task[0])
+
+
 
 #AI subtasks
 @app.route("/generate_subtasks", methods=["POST"])

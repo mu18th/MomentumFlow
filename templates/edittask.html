@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Edit Task
+{% endblock %}
+
+{% block body %}
+    <header>
+            <h1>Smart Task Manager</h1>
+    </header>
+
+    <main>
+        <section id="form" aria-labelledby="add-task-heading">
+                <h2 id="add-task-heading">Update Task</h2>
+                <form action="{{ url_for('editTask', id=task.id) }}" method="post">
+                    <label for="task-title">Task Title</label>
+                    <input autocomplete="off" autofocus name="title" type="text" id="task-title" value="{{ task.title }}" required>
+
+                    <label for="task-desc">Task Description</label>
+                    <textarea autocomplete="off" autofocus name="description" id="task-desc">{{ task.description }}</textarea>
+
+                    <label for="task-priority">Priority</label>
+                    <select name="priority" id="task-priority" value="{{ task.priority }}" required>
+                        <option value="low" {% if task.priority == 'low' %}selected{% endif %}>Low</option>
+                        <option value="medium" {% if task.priority == 'medium' %}selected{% endif %}>Medium</option>
+                        <option value="high" {% if task.priority == 'high' %}selected{% endif %}>High</option>
+                    </select>
+
+                    <label for="due-date">Due Date</label>
+                    <input autocomplete="off" autofocus name="due-date" type="date" id="due-date" placeholder="{{ task.due_date }}">
+                    
+                    <button type="submit">Update Task</button>
+                </form>
+            </section>
+    </main>
+{% endblock %}

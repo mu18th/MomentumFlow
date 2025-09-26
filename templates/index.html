@@ -25,6 +25,7 @@
                                     <p>{{ task.description }}</p>
                                     <button onclick="generateTask('{{ task.id}}')" id="sub-task">Generate 3 Subtasks</button>
                                     <button onclick="deleteTask('{{ task.id }}')" id="delete-task">Delete Task</button>
+                                    <a href="{{ url_for('editTask', id=task.id) }}" id="update-task">Update Task</a>
                                 </li>
                             {% endif %}
                         {% endfor %}
@@ -43,6 +44,7 @@
                                     <p>{{ task.description }}</p>
                                     <button onclick="generateTask('{{ task.id}}')" id="sub-task">Generate 3 Subtasks</button>
                                     <button onclick="deleteTask('{{ task.id }}')" id="delete-task">Delete Task</button>
+                                    <a href="{{ url_for('editTask', id=task.id) }}" id="update-task">Update Task</a>
                                 </li>
                             {% endif %}
                         {% endfor %}
@@ -60,7 +62,8 @@
                                     <h3>{{ task.title }}</h3>
                                     <p>{{ task.description }}</p>
                                     <button onclick="generateTask('{{ task.id}}')" id="sub-task">Generate 3 Subtasks</button>
-                                    <button onclick="deleteTask('{{ task.id }}')" id="delete-task">Delete Task</button>                            
+                                    <button onclick="deleteTask('{{ task.id }}')" id="delete-task">Delete Task</button>
+                                    <a href="{{ url_for('editTask', id=task.id) }}" id="update-task">Update Task</a>                  
                                 </li>
                             {% endif %}
                         {% endfor %}

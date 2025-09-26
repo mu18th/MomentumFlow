@@ -56,12 +56,16 @@ def init_db():
 
 def get_tasks_by_user(user_id):
     db = get_db()
-    return db.execute("SELECT * FROM tasks WHERE user_id = ?", (user_id,)).fetchall()
+    return db.execute(
+        "SELECT * FROM tasks WHERE user_id = ?", 
+        (user_id,)).fetchall()
 
 
 def get_task_by_id(task_id):
     db = get_db()
-    return db.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchall()
+    return db.execute(
+        "SELECT * FROM tasks WHERE id = ?", 
+        (task_id,)).fetchall()
 
 
 def add_task(title, user_id, description, status, priority, due_date):
@@ -76,14 +80,30 @@ def add_task(title, user_id, description, status, priority, due_date):
 def delete_task(user_id, task_id):
     db = get_db()
 
-    db.execute("DELETE FROM tasks WHERE user_id = ? AND id = ?", (user_id, task_id))
+    db.execute(
+        "DELETE FROM tasks WHERE user_id = ? AND id = ?", 
+        (user_id, task_id))
     db.commit()
 
-def update_task(status, task_id):
+
+def update_status(status, task_id):
     db = get_db()
 
-    db.execute("UPDATE tasks SET status = ? WHERE id = ?", (status, task_id))
+    db.execute(
+        "UPDATE tasks SET status = ? WHERE id = ?", 
+        (status, task_id))
     db.commit()
+
+
+def update_task(id, title, description, priority, due_date):
+    db = get_db()
+
+    db.execute(
+        "UPDATE tasks SET title = ?, description = ?, priority = ?, due_date = ? WHERE id = ?",
+        (title, description, priority, due_date, id)
+    )
+    db.commit()
+
 
 def register_user(username, email, password_hash):
     db = get_db()
@@ -96,7 +116,10 @@ def register_user(username, email, password_hash):
 
 def get_user_by_username(username):
     db = get_db()
-    return db.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchall()
+    return db.execute(
+        "SELECT * FROM users WHERE username = ?", 
+        (username,)).fetchall()
+
 
 if __name__ == "__main__":
     init_db()
