@@ -57,7 +57,14 @@ def init_db():
 def get_tasks_by_user(user_id):
     db = get_db()
     return db.execute(
-        "SELECT * FROM tasks WHERE user_id = ?", 
+        "SELECT * FROM tasks WHERE user_id = ? ORDER BY " \
+        "CASE WHEN due_date IS NULL THEN 1 ELSE 0 END," \
+        "due_date ASC," \
+        " CASE priority " \
+            "WHEN 'high' THEN 1 " \
+            "WHEN 'medium' THEN 2 " \
+            "WHEN 'low' THEN 3 " \
+        "END ASC;", 
         (user_id,)).fetchall()
 
 

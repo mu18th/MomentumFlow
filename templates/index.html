@@ -84,7 +84,7 @@
             </section>
         </main>
 
-        <script>
+        <!---<script>
             const draggableTasks = document.querySelectorAll("[draggable='true']");
 
             //drag tasks
@@ -133,7 +133,9 @@
                     .then(response => {
 
                         if (response.status !== 200) {
-                            
+
+                            alert("Failed to update task status.");
+                            location.reload(true); 
                             console.log(`Response status  was not 200 ${response.status}`);
                             return;
                         }
@@ -145,65 +147,5 @@
                     .catch(err => console.error("Fetch error:", err));
                 });
             });
-
-            function generateTask(id) {
-                var entry = {
-                        taskID: id
-                    };
-
-                fetch(`${window.location.origin}/generate_subtasks`, {
-                        method: "POST",
-                        credentials: "include",
-                        body: JSON.stringify(entry),
-                        cache: "no-cache",
-                        headers: new Headers({
-                            "content-type": "application/json"
-                        })
-                    })
-                    .then(response => {
-
-                        if (response.status !== 200) {
-                            
-                            console.log(`Response status  was not 200 ${response.status}`);
-                            return;
-                        }
-                        return response.json();
-                    })
-                    .then(data =>  {
-                        console.log(data);
-                        alert("Subtasks generated. Please refresh the page to see them.");
-                     })
-                    .catch(err => console.error("Fetch error:", err));
-            }
-
-            function deleteTask(id) {
-                var entry = {
-                        taskID: id
-                    };
-
-                fetch(`${window.location.origin}/delete-task`, {
-                        method: "POST",
-                        credentials: "include",
-                        body: JSON.stringify(entry),
-                        cache: "no-cache",
-                        headers: new Headers({
-                            "content-type": "application/json"
-                        })
-                    })
-                    .then(response => {
-
-                        if (response.status !== 200) {
-                            
-                            console.log(`Response status  was not 200 ${response.status}`);
-                            return;
-                        }
-                        return response.json();
-                    })
-                    .then(data =>  {
-                        console.log(data);
-                        alert("Task deleted. Please refresh the page to see the changes.");
-                     })
-                    .catch(err => console.error("Fetch error:", err));
-            }
-        </script>
+        </script>-->
 {% endblock %}
