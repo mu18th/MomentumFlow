@@ -28,18 +28,18 @@
                                         <p>due on: {{ task.due_date }}</p>
                                     {% endif %}
 
-                                    {% set printed = False %}
+                                    {% set ns = namespace(printed=false) %}
+                                    <ol>
                                     {% for sub in subtasks %}
-                                        <ol>
                                         {% if sub.parent_id == task.id %}
-                                            {% if not printed %}
+                                            {% if not ns.printed %}
                                                 <h6>SubTasks:</h6>
-                                                {% set printed = True %}
+                                                {% set ns.printed = true %}
                                             {% endif %}
                                             <li>{{ sub.title }}, {{ sub.status }}</li>
                                         {% endif %}
-                                        </ol>
                                     {% endfor %}
+                                    </ol>
                                     <button onclick="generateTask('{{ task.id}}')" id="sub-task">Generate 3 Subtasks</button>
                                     <button onclick="deleteTask('{{ task.id }}')" id="delete-task">Delete Task</button>
                                     <a href="{{ url_for('editTask', id=task.id) }}" id="update-task">Update Task</a>
@@ -64,18 +64,18 @@
                                         <p>due on: {{ task.due_date }}</p>
                                     {% endif %}
 
-                                    {% set printed = False %}
+                                    {% set ns = namespace(printed=false) %}
+                                    <ol>
                                     {% for sub in subtasks %}
-                                        <ol>
                                         {% if sub.parent_id == task.id %}
-                                            {% if not printed %}
+                                            {% if not ns.printed %}
                                                 <h6>SubTasks:</h6>
-                                                {% set printed = True %}
+                                                {% set ns.printed = true %}
                                             {% endif %}
                                             <li>{{ sub.title }}, {{ sub.status }}</li>
                                         {% endif %}
-                                        </ol>
                                     {% endfor %}
+                                    </ol>
                                     <button onclick="generateTask('{{ task.id}}')" id="sub-task">Generate 3 Subtasks</button>
                                     <button onclick="deleteTask('{{ task.id }}')" id="delete-task">Delete Task</button>
                                     <a href="{{ url_for('editTask', id=task.id) }}" id="update-task">Update Task</a>
@@ -99,19 +99,19 @@
                                     {% if task.due_date is not none %}
                                         <p>due on: {{ task.due_date }}</p>
                                     {% endif %}
-
-                                    {% set printed = False %}
+                                    
+                                    {% set ns = namespace(printed=false) %}
+                                    <ol>
                                     {% for sub in subtasks %}
-                                        <ol>
                                         {% if sub.parent_id == task.id %}
-                                            {% if not printed %}
+                                            {% if not ns.printed %}
                                                 <h6>SubTasks:</h6>
-                                                {% set printed = True %}
+                                                {% set ns.printed = true %}
                                             {% endif %}
                                             <li>{{ sub.title }}, {{ sub.status }}</li>
                                         {% endif %}
-                                        </ol>
                                     {% endfor %}
+                                    </ol>
                                     <button onclick="generateTask('{{ task.id}}')" id="sub-task">Generate 3 Subtasks</button>
                                     <button onclick="deleteTask('{{ task.id }}')" id="delete-task">Delete Task</button>
                                     <a href="{{ url_for('editTask', id=task.id) }}" id="update-task">Update Task</a>                  

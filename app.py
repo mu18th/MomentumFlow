@@ -32,7 +32,8 @@ def about():
 @login_required
 def tasks():
     tasks =  get_tasks_by_user(session["user_id"])
-    return render_template("tasks.html", tasks=tasks)
+    subtasks = get_subtasks(session["user_id"])
+    return render_template("tasks.html", tasks=tasks,  subtasks=subtasks)
 
 
 #add task route
