@@ -27,6 +27,19 @@
                                     {% if task.due_date is not none %}
                                         <p>due on: {{ task.due_date }}</p>
                                     {% endif %}
+
+                                    {% set printed = False %}
+                                    {% for sub in subtasks %}
+                                        <ol>
+                                        {% if sub.parent_id == task.id %}
+                                            {% if not printed %}
+                                                <h6>SubTasks:</h6>
+                                                {% set printed = True %}
+                                            {% endif %}
+                                            <li>{{ sub.title }}, {{ sub.status }}</li>
+                                        {% endif %}
+                                        </ol>
+                                    {% endfor %}
                                     <button onclick="generateTask('{{ task.id}}')" id="sub-task">Generate 3 Subtasks</button>
                                     <button onclick="deleteTask('{{ task.id }}')" id="delete-task">Delete Task</button>
                                     <a href="{{ url_for('editTask', id=task.id) }}" id="update-task">Update Task</a>
@@ -50,6 +63,19 @@
                                     {% if task.due_date is not none %}
                                         <p>due on: {{ task.due_date }}</p>
                                     {% endif %}
+
+                                    {% set printed = False %}
+                                    {% for sub in subtasks %}
+                                        <ol>
+                                        {% if sub.parent_id == task.id %}
+                                            {% if not printed %}
+                                                <h6>SubTasks:</h6>
+                                                {% set printed = True %}
+                                            {% endif %}
+                                            <li>{{ sub.title }}, {{ sub.status }}</li>
+                                        {% endif %}
+                                        </ol>
+                                    {% endfor %}
                                     <button onclick="generateTask('{{ task.id}}')" id="sub-task">Generate 3 Subtasks</button>
                                     <button onclick="deleteTask('{{ task.id }}')" id="delete-task">Delete Task</button>
                                     <a href="{{ url_for('editTask', id=task.id) }}" id="update-task">Update Task</a>
@@ -73,6 +99,19 @@
                                     {% if task.due_date is not none %}
                                         <p>due on: {{ task.due_date }}</p>
                                     {% endif %}
+
+                                    {% set printed = False %}
+                                    {% for sub in subtasks %}
+                                        <ol>
+                                        {% if sub.parent_id == task.id %}
+                                            {% if not printed %}
+                                                <h6>SubTasks:</h6>
+                                                {% set printed = True %}
+                                            {% endif %}
+                                            <li>{{ sub.title }}, {{ sub.status }}</li>
+                                        {% endif %}
+                                        </ol>
+                                    {% endfor %}
                                     <button onclick="generateTask('{{ task.id}}')" id="sub-task">Generate 3 Subtasks</button>
                                     <button onclick="deleteTask('{{ task.id }}')" id="delete-task">Delete Task</button>
                                     <a href="{{ url_for('editTask', id=task.id) }}" id="update-task">Update Task</a>                  
@@ -84,68 +123,4 @@
             </section>
         </main>
 
-        <!---<script>
-            const draggableTasks = document.querySelectorAll("[draggable='true']");
-
-            //drag tasks
-            draggableTasks.forEach(task => {
-                task.addEventListener("dragstart", e => {
-                    e.dataTransfer.setData("text/plain", task.id);
-                });
-            });
-
-            //drop tasks
-            const taskLists = document.querySelectorAll(".task-list");
-            taskLists.forEach(taskList => {
-                taskList.addEventListener("dragover", e => {
-                    e.preventDefault();
-                    taskList.classList.add("task-list--over");
-                });
-
-                taskList.addEventListener("dragleave", e => {
-                    taskList.classList.remove("task-list--over");
-                })
-
-                taskList.addEventListener("drop", e => {
-                    e.preventDefault();
-                    const droppedTaskId = e.dataTransfer.getData("text/plain");
-                    const droppedTask = document.getElementById(droppedTaskId);
-                    
-                    taskList.appendChild(droppedTask);      
-                    taskList.classList.remove("task-list--over");
-                    
-                    var entry = {
-                        taskID: droppedTask.id,
-                        status: taskList.id
-                    };
-
-                    console.log(entry);
-
-                    fetch(`${window.location.origin}/update-status`, {
-                        method: "POST",
-                        credentials: "include",
-                        body: JSON.stringify(entry),
-                        cache: "no-cache",
-                        headers: new Headers({
-                            "content-type": "application/json"
-                        })
-                    })
-                    .then(response => {
-
-                        if (response.status !== 200) {
-
-                            alert("Failed to update task status.");
-                            location.reload(true); 
-                            console.log(`Response status  was not 200 ${response.status}`);
-                            return;
-                        }
-                        return response.json();
-                    })
-                    .then(data =>  {
-                        console.log(data);
-                     })
-                    .catch(err => console.error("Fetch error:", err));
-                });
-            });
-        </script>-->
 {% endblock %}

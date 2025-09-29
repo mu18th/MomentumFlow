@@ -43,7 +43,8 @@ def init_db():
                 status TEXT NOT NULL DEFAULT 'To Do',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
                 priority TEXT NOT NULL, 
-                due_date DATE,  
+                due_date DATE,
+                parent_id INTEGER DEFAULT NULL,
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
                 )
             """)
@@ -74,12 +75,17 @@ def get_task_by_id(task_id):
         "SELECT * FROM tasks WHERE id = ?", 
         (task_id,)).fetchall()
 
+def get_subtasks(user_id):
+    db = get_db()
+    return db.execute(
+        "SELECT * FROM tasks WHERE user_id = ? AND parent_id IS NOT NULL ORDER BY parent_id",
+        (user_id,)).fetchall()
 
-def add_task(title, user_id, description, status, priority, due_date):
+def add_task(title, user_id, description, status, priority, due_date, parent_id=None):
     db = get_db()
     db.execute(
-        "INSERT INTO tasks (title, user_id, description, status, priority, due_date) VALUES (?, ?, ?, ?, ?, ?)",
-        (title, user_id, description, status, priority, due_date)
+        "INSERT INTO tasks (title, user_id, description, status, priority, due_date, parent_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        (title, user_id, description, status, priority, due_date, parent_id)
     )
     db.commit()
 
@@ -92,6 +98,13 @@ def delete_task(user_id, task_id):
         (user_id, task_id))
     db.commit()
 
+def delete_subtasks(parent_id):
+    db = get_db()
+
+    db.execute(
+        "DELETE FROM tasks WHERE parent_id = ?", 
+        (parent_id,))
+    db.commit()
 
 def update_status(status, task_id):
     db = get_db()

@@ -18,7 +18,8 @@ Session(app)
 @login_required
 def index():
     tasks = get_tasks_by_user(session["user_id"])
-    return render_template("index.html", tasks=tasks)
+    subtasks = get_subtasks(session["user_id"])
+    return render_template("index.html", tasks=tasks, subtasks=subtasks)
 
 
 #not important routes
@@ -77,6 +78,7 @@ def deleteTask():
     if not id:
         return jsonify({"message": "not valid ID"}) , 400
     
+    delete_subtasks(id)  
     delete_task(session["user_id"], id)
     
     return jsonify({"taskID": id, "message": "updated"}), 200
@@ -159,8 +161,10 @@ def generateSubtasks():
         return jsonify({"message": "could not generate tasks"}) , 400
     
     for task in subtasks:
-        add_task("Subtask of: " + mainTask[0]["title"], session["user_id"], task,
-                  mainTask[0]["status"], mainTask[0]["priority"], None)
+        title = task.split()
+        title = " ".join(title[1:2])
+        add_task(title, session["user_id"], task,
+                  mainTask[0]["status"], mainTask[0]["priority"], mainTask[0]["due_date"], id)
     
     return jsonify({"taskID": id, "message": "updated"}), 200
 

@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 })
             })
                 .then(response => {
-                    if (response.status !== 200) {
+                    if (!response.ok) {
                         alert("Failed to update task status.");
                         location.reload(true);
                         console.log(`Response status was not 200 ${response.status}`);
@@ -123,10 +123,10 @@ function deleteTask(id) {
                 return;
             }
             // remove task element dynamically
-            const taskEl = document.getElementById(id);
-            if (taskEl) taskEl.remove();
+            const task = document.getElementById(id);
+            if (task) task.remove();
 
-            showMessage("Task deleted.");
+            showMessage("Task deleted. Regresh the page if there are subtasks of it to be deleted");
             return response.json();
         })
         .then(data => {
