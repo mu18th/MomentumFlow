@@ -52,18 +52,17 @@ def generate_subtasks(title: str, description: str) -> list[str]:
 
 def suggest_next_task(tasks):
     prompt = f"""
-    Given the following tasks with their titles, status, priority, and due dates, 
-    suggest which task I should work on next. Return only one task ID.
+    Given the following tasks (id, title, status, priority, due_date),
+    suggest which task I should work on next.
+    Return ONLY valid JSON: {{ "task_id": X }}.
 
-    List Of Tasks = {tasks}
-    
-    Return ONLY the task id number (e.g., 5). Do not return JSON or text.
+    Tasks: {tasks}
     """
 
     try:
         client = OpenAI(
-            base_url="https://openrouter.ai/api/v1",
-            api_key=os.getenv("OPENROUTER_API_KEY"),
+            base_url= "https://openrouter.ai/api/v1",
+            api_key= os.getenv("OPENROUTER_API_KEY"),
         )
 
         response = client.chat.completions.create(
