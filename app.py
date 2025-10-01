@@ -111,13 +111,10 @@ def nextTask():
     tasks = get_tasks_notDone(session["user_id"])
 
     next_task_id = suggest_next_task(tasks)
-    print(next_task_id)
 
     # if falls, return first in the list
     if not next_task_id:
         next_task_id = tasks[0]["id"]
-
-    print(next_task_id)
 
     return jsonify({"task_id": next_task_id})
 

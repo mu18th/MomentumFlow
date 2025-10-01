@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
-import json
+import re
 
 
 load_dotenv()
@@ -51,13 +51,27 @@ def generate_subtasks(title: str, description: str) -> list[str]:
 
 
 def suggest_next_task(tasks):
-    prompt = f"""
-    Given the following tasks (id, title, status, priority, due_date),
-    suggest which task I should work on next.
-    Return ONLY valid JSON: {{ "task_id": X }}.
 
-    Tasks: {tasks}
-    """
+    tasks_list = [
+        {
+            "id": t["id"],
+            "title": t["title"],
+            "status": t["status"],
+            "priority": t["priority"],
+            "due_date": t["due_date"].isoformat() if t["due_date"] else None
+        }
+        for t in tasks
+    ]
+
+    prompt = f"""
+            You are a helpful AI project manager.
+            Given the following tasks (id, title, status, priority, due_date), 
+            suggest which task I should work on next.
+            Reply with **only the task ID as a number**, nothing else.
+
+            Tasks:
+            {tasks_list}
+            """
 
     try:
         client = OpenAI(
@@ -73,9 +87,12 @@ def suggest_next_task(tasks):
             ]
         )
 
-        raw_output = response.choices[0].message.content.strip()
-        parsed = json.loads(raw_output)
-        return parsed.get("task_id")
+        raw_output = response.choices[0].message.content
+
+        match = re.search(r"\d+", raw_output)
+        return int(match.group(0))
+
+            
 
     except Exception as e:
         print("Error in suggest_next_task:", e)  
