@@ -1,7 +1,7 @@
 from flask import Flask, g, render_template, request, redirect, jsonify, url_for, make_response, session, flash
 from db import *
 from werkzeug.security import check_password_hash, generate_password_hash
-from kanbanAI import generate_subtasks
+from kanbanAI import generate_subtasks, suggest_next_task
 from helpers import apology, login_required
 from flask_session import Session
 
@@ -104,6 +104,23 @@ def updateTaskStatus():
         
     return jsonify({"taskID": id, "status": status, "message": "updated"}), 200
     
+
+@app.route("/next_task", methods=["GET", "POST"])
+@login_required
+def nextTask():
+    tasks = get_tasks_notDone(session["user_id"])
+
+    next_task_id = suggest_next_task(tasks)
+    print(next_task_id)
+
+    # if falls, return first in the list
+    if not next_task_id:
+        next_task_id = tasks[0]["id"]
+
+    print(next_task_id)
+
+    return jsonify({"task_id": next_task_id})
+
 
 @app.route("/<int:id>/edit", methods=["GET", "POST"])
 @login_required

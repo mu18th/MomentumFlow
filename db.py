@@ -58,15 +58,15 @@ def init_db():
 def get_tasks_by_user(user_id):
     db = get_db()
     return db.execute(
-        "SELECT * FROM tasks WHERE user_id = ? ORDER BY " \
-        "CASE WHEN due_date IS NULL THEN 1 ELSE 0 END," \
-        "due_date ASC," \
-        " CASE priority " \
-            "WHEN 'high' THEN 1 " \
-            "WHEN 'medium' THEN 2 " \
-            "WHEN 'low' THEN 3 " \
-        "END ASC;", 
-        (user_id,)).fetchall()
+        """SELECT * FROM tasks WHERE user_id = ? ORDER BY 
+        CASE WHEN due_date IS NULL THEN 1 ELSE 0 END, 
+        due_date ASC, 
+        CASE priority 
+            WHEN 'high' THEN 1 
+            WHEN 'medium' THEN 2 
+            WHEN 'low' THEN 3 
+        END ASC; 
+        """,(user_id,)).fetchall()
 
 
 def get_task_by_id(task_id):
@@ -80,6 +80,23 @@ def get_subtasks(user_id):
     return db.execute(
         "SELECT * FROM tasks WHERE user_id = ? AND parent_id IS NOT NULL ORDER BY parent_id",
         (user_id,)).fetchall()
+
+
+def get_tasks_notDone(user_id):
+    db = get_db()
+    return db.execute("""
+        SELECT id, title, description, status, priority, due_date, parent_id
+        FROM tasks
+        WHERE user_id = ? AND status != 'Done'
+        ORDER BY
+            CASE WHEN due_date IS NULL THEN 1 ELSE 0 END,
+            due_date ASC,
+            CASE priority
+                WHEN 'high' THEN 1
+                WHEN 'medium' THEN 2
+                WHEN 'low' THEN 3
+            END ASC;
+    """, (user_id,)).fetchall()
 
 def add_task(title, user_id, description, status, priority, due_date, parent_id=None):
     db = get_db()

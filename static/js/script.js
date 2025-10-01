@@ -134,3 +134,22 @@ function deleteTask(id) {
         })
         .catch(err => console.error("Fetch error:", err));
 }
+
+function getNextTask() {
+    fetch("/next_task")
+        .then(response => response.json())
+        .then(data => {
+            document.querySelectorAll(".task").forEach(el => {
+                el.classList.remove("selected");
+            });
+
+            const task = document.getElementById(data.task_id);
+            if (task) {
+                task.classList.add("selected");
+                console.log("done");
+
+                task.scrollIntoView({behavior: "smooth", block: "center"});
+            }
+        })
+        .catch(err => console.error("Error fetching next task:", err));
+}

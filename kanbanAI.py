@@ -1,6 +1,8 @@
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
+import json
+
 
 load_dotenv()
 
@@ -47,6 +49,39 @@ def generate_subtasks(title: str, description: str) -> list[str]:
         print(e)
         return "Error"
 
+
+def suggest_next_task(tasks):
+    prompt = f"""
+    Given the following tasks with their titles, status, priority, and due dates, 
+    suggest which task I should work on next. Return only one task ID.
+
+    List Of Tasks = {tasks}
+    
+    Return ONLY the task id number (e.g., 5). Do not return JSON or text.
+    """
+
+    try:
+        client = OpenAI(
+            base_url="https://openrouter.ai/api/v1",
+            api_key=os.getenv("OPENROUTER_API_KEY"),
+        )
+
+        response = client.chat.completions.create(
+            model="deepseek/deepseek-chat-v3.1:free",
+            messages=[
+                {"role": "system", "content": "You are a helpful AI project manager."},
+                {"role": "user", "content": prompt}
+            ]
+        )
+
+        raw_output = response.choices[0].message.content.strip()
+        parsed = json.loads(raw_output)
+        return parsed.get("task_id")
+
+    except Exception as e:
+        print("Error in suggest_next_task:", e)  
+        return None
+    
 # test
 if __name__ == "__main__":
     title = "Develop and launch a new company website"

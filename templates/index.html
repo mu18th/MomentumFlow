@@ -20,7 +20,7 @@
                         <li style="background-color: #FFFFE0"></li>
                         {% for task in tasks %}
                             {% if task.status == 'To Do' %}
-                                <li id="{{ task.id }}" draggable="true">
+                                <li id="{{ task.id }}" class="task" draggable="true">
                                     <h3>{{ task.title }}</h3>
                                     <p>{{ task.description }}</p>
                                     <p>priority: {{ task.priority }}</p>
@@ -56,7 +56,7 @@
                         <li style="background-color: #E0FFFF"></li>
                         {% for task in tasks %}
                             {% if task.status == 'In Progress' %}
-                                <li id="{{ task.id }}" draggable="true">
+                                <li id="{{ task.id }}" class="task" draggable="true">
                                     <h3>{{ task.title }}</h3>
                                     <p>{{ task.description }}</p>
                                     <p>priority: {{ task.priority }}</p>
@@ -92,7 +92,7 @@
                         <li style="background-color: #E0FFE0"></li>
                         {% for task in tasks %}
                             {% if task.status == 'Done' %}
-                                <li id="{{ task.id }}" draggable="true">
+                                <li id="{{ task.id }}" class="task" draggable="true">
                                     <h3>{{ task.title }}</h3>
                                     <p>{{ task.description }}</p>
                                     <p>priority: {{ task.priority }}</p>
@@ -121,6 +121,7 @@
                     </ol>
                 </section>
             </section>
+            <button id="next-task-btn" onclick="getNextTask()">What should I do now?</button>
         </main>
 
 {% endblock %}
