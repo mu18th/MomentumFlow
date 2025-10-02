@@ -56,6 +56,7 @@ def suggest_next_task(tasks):
         {
             "id": t["id"],
             "title": t["title"],
+            "description": t["description"],
             "status": t["status"],
             "priority": t["priority"],
             "due_date": t["due_date"].isoformat() if t["due_date"] else None
@@ -65,7 +66,7 @@ def suggest_next_task(tasks):
 
     prompt = f"""
             You are a helpful AI project manager.
-            Given the following tasks (id, title, status, priority, due_date), 
+            Given the following tasks (id, title, description, status, priority, due_date), 
             suggest which task I should work on next.
             Reply with **only the task ID as a number**, nothing else.
 
@@ -97,7 +98,47 @@ def suggest_next_task(tasks):
     except Exception as e:
         print("Error in suggest_next_task:", e)  
         return None
-    
+
+
+def summarize_board(tasks):
+    tasks_list = [
+        {
+            "id": t["id"],
+            "title": t["title"],
+            "description": t["description"],
+            "status": t["status"],
+            "priority": t["priority"],
+            "due_date": t["due_date"].isoformat() if t["due_date"] else None
+        }
+        for t in tasks
+    ]
+
+    prompt = f"""
+        Summarize the following board in 1–2 sentences, focusing on what’s urgent or pending:
+        {tasks_list}
+    """
+
+    try:
+        client = OpenAI(
+            base_url= "https://openrouter.ai/api/v1",
+            api_key= os.getenv("OPENROUTER_API_KEY"),
+        )
+
+        response = client.chat.completions.create(
+            model="deepseek/deepseek-chat-v3.1:free",
+            messages=[
+                {"role": "system", "content": "You are a helpful AI project manager."},
+                {"role": "user", "content": prompt}
+            ]
+        )
+
+        summary_text = response.choices[0].message.content.strip()
+
+        return summary_text
+    except Exception:
+        return "⚠️ Could not generate summary right now."
+
+
 # test
 if __name__ == "__main__":
     title = "Develop and launch a new company website"

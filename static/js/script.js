@@ -153,3 +153,27 @@ function getNextTask() {
         })
         .catch(err => console.error("Error fetching next task:", err));
 }
+
+function getSummary() {
+    fetch("/get_summary")
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("summary-text").innerText = data.summary || "No summary yet.";
+        })
+        .catch(error => {
+            console.error("Error fetching summary:", error);
+            document.getElementById("summary-text").innerText = "⚠️ Failed to load summary.";
+        });    
+}
+
+function refreshSummary() {
+    fetch("/summary", { method: "POST" })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("summary-text").innerText = data.summary || "No summary yet.";
+        })
+        .catch(error => {
+            console.error("Error refreshing summary:", error);
+            document.getElementById("summary-text").innerText = "⚠️ Failed to generate summary.";
+        });
+}

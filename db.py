@@ -49,6 +49,15 @@ def init_db():
                 )
             """)
 
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS summaries (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,            
+                user_id INTEGER NOT NULL,
+                summary TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+            """)
+
             conn.commit()
             print("Tables created successfully")
     except sqlite3.Error as e:
@@ -157,6 +166,20 @@ def get_user_by_username(username):
         "SELECT * FROM users WHERE username = ?", 
         (username,)).fetchall()
 
+def add_summary(user_id, summary):
+    db = get_db()
+    db.execute(
+        "INSERT INTO summaries (user_id, summary) VALUES (?, ?)",
+        (user_id, summary)
+    )
+    db.commit()
+
+def get_summary(user_id):
+    db = get_db()
+    return db.execute(
+        "SELECT summary FROM summaries WHERE user_id = ? ORDER BY created_at DESC LIMIT 1",
+        (user_id,)
+    ).fetchone()
 
 if __name__ == "__main__":
     init_db()

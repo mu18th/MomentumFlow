@@ -1,7 +1,7 @@
 from flask import Flask, g, render_template, request, redirect, jsonify, url_for, make_response, session, flash
 from db import *
 from werkzeug.security import check_password_hash, generate_password_hash
-from kanbanAI import generate_subtasks, suggest_next_task
+from kanbanAI import generate_subtasks, suggest_next_task, summarize_board
 from helpers import apology, login_required
 from flask_session import Session
 
@@ -105,7 +105,7 @@ def updateTaskStatus():
     return jsonify({"taskID": id, "status": status, "message": "updated"}), 200
     
 
-@app.route("/next_task", methods=["GET", "POST"])
+@app.route("/next_task", methods=["GET"])
 @login_required
 def nextTask():
     tasks = get_tasks_notDone(session["user_id"])
@@ -118,6 +118,28 @@ def nextTask():
 
     return jsonify({"task_id": next_task_id})
 
+@app.route("/summary", methods=["POST"])
+@login_required
+def summarizeBoard():
+    tasks = get_tasks_by_user(session["user_id"])
+
+    summary = summarize_board(tasks)
+
+    add_summary(session["user_id"], summary)
+
+    return jsonify({"summary": summary})
+
+@app.route("/get_summary", methods=["GET"])
+@login_required
+def getSummay():
+    row = get_summary(session["user_id"])
+
+    if row:
+        summary_text = row["summary"]
+    else:
+        summary_text = None
+    
+    return jsonify({"summary": summary_text})
 
 @app.route("/<int:id>/edit", methods=["GET", "POST"])
 @login_required
