@@ -1,4 +1,4 @@
-from flask import Flask, g, render_template, request, redirect, jsonify, url_for, make_response, session, flash
+from flask import Flask, render_template, request, redirect, jsonify, url_for, make_response, session, flash
 from db import *
 from werkzeug.security import check_password_hash, generate_password_hash
 from kanbanAI import generate_subtasks, suggest_next_task, summarize_board
@@ -17,8 +17,15 @@ Session(app)
 @app.route("/")
 @login_required
 def index():
-    tasks = get_tasks_by_user(session["user_id"])
+    query = request.args.get("search")
+
+    if query:
+        tasks = get_searched_tasks(session["user_id"], query)
+    else:
+        tasks = get_tasks_by_user(session["user_id"])
+    
     subtasks = get_subtasks(session["user_id"])
+    
     return render_template("index.html", tasks=tasks, subtasks=subtasks)
 
 
@@ -118,6 +125,7 @@ def nextTask():
 
     return jsonify({"task_id": next_task_id})
 
+
 @app.route("/summary", methods=["POST"])
 @login_required
 def summarizeBoard():
@@ -128,6 +136,7 @@ def summarizeBoard():
     add_summary(session["user_id"], summary)
 
     return jsonify({"summary": summary})
+
 
 @app.route("/get_summary", methods=["GET"])
 @login_required
@@ -140,6 +149,7 @@ def getSummay():
         summary_text = None
     
     return jsonify({"summary": summary_text})
+
 
 @app.route("/<int:id>/edit", methods=["GET", "POST"])
 @login_required
@@ -173,7 +183,6 @@ def editTask(id):
             return redirect(url_for("index", msg="not your task"))
         
         return render_template("edittask.html", task=task[0])
-
 
 
 #AI subtasks

@@ -181,6 +181,14 @@ def get_summary(user_id):
         (user_id,)
     ).fetchone()
 
+
+def get_searched_tasks(id, query):
+    db = get_db()
+    query = f"%{query}%"
+    return db.execute(
+        "SELECT * FROM tasks WHERE user_id = ? AND (title LIKE ? OR description LIKE ?)",
+        (id, query, query)
+    ).fetchall()
 if __name__ == "__main__":
     init_db()
 

@@ -12,6 +12,10 @@
         </header>
 
         <main>
+            <input type="text" id ="search" placeholder="Search tasks..." onclick="searchTasks()">
+            {% if request.args.get('search') %}
+                <p>Results for "{{ request.args.get('search') }}"</p>
+            {% endif %}
             <section id="kanban-board">
                 <section id="todo-column" aria-labelledby="todo-heading" >
                     <h2 id="todo-heading">To Do</h2>

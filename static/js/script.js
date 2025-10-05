@@ -177,3 +177,28 @@ function refreshSummary() {
             document.getElementById("summary-text").innerText = "⚠️ Failed to generate summary.";
         });
 }
+
+//written by chatgpt
+function searchTasks() {
+    const searchInput = document.getElementById("search");
+    if (!searchInput) return;
+
+    searchInput.addEventListener("input", async (e) => {
+        const query = e.target.value;
+        try {
+            const res = await fetch(`/?search=${encodeURIComponent(query)}`);
+            if (!res.ok) throw new Error("Network response was not ok");
+            
+            const html = await res.text();
+            const newBoard = new DOMParser()
+                .parseFromString(html, "text/html")
+                .querySelector("#kanban-board");
+
+            if (newBoard) {
+                document.querySelector("#kanban-board").innerHTML = newBoard.innerHTML;
+            }
+        } catch (err) {
+            console.error("Error fetching search results:", err);
+        }
+    });
+}
