@@ -160,8 +160,8 @@ function getSummary() {
         .then(data => {
             document.getElementById("summary-text").innerText = data.summary || "No summary yet.";
         })
-        .catch(error => {
-            console.error("Error fetching summary:", error);
+        .catch(err => {
+            console.error("Error fetching summary:", err);
             document.getElementById("summary-text").innerText = "⚠️ Failed to load summary.";
         });    
 }
@@ -172,33 +172,50 @@ function refreshSummary() {
         .then(data => {
             document.getElementById("summary-text").innerText = data.summary || "No summary yet.";
         })
-        .catch(error => {
-            console.error("Error refreshing summary:", error);
+        .catch(err => {
+            console.error("Error refreshing summary:", err);
             document.getElementById("summary-text").innerText = "⚠️ Failed to generate summary.";
         });
 }
 
-//written by chatgpt
-function searchTasks() {
-    const searchInput = document.getElementById("search");
-    if (!searchInput) return;
+//written with some help from chatgpt
+function updateBoard() {
+    const searchInput = document.getElementById("search").value.trim();
+    const priority = document.getElementById("priority-filter").value;
+    const start = document.getElementById("start-date").value;
+    const end = document.getElementById("end-date").value;
 
-    searchInput.addEventListener("input", async (e) => {
-        const query = e.target.value;
-        try {
-            const res = await fetch(`/?search=${encodeURIComponent(query)}`);
-            if (!res.ok) throw new Error("Network response was not ok");
-            
-            const html = await res.text();
+    const params = new URLSearchParams();
+    if (searchInput) params.append("search", searchInput);
+    if (priority) params.append("priority", priority);
+    if (start) params.append("start", start);
+    if (end) params.append("end", end);
+
+    fetch(`/?${params.toString()}`)
+        .then(res => res.text())
+        .then(html => {
             const newBoard = new DOMParser()
                 .parseFromString(html, "text/html")
                 .querySelector("#kanban-board");
-
-            if (newBoard) {
+            if (newBoard)
                 document.querySelector("#kanban-board").innerHTML = newBoard.innerHTML;
-            }
-        } catch (err) {
-            console.error("Error fetching search results:", err);
-        }
+
+            const searchTermEl = document.getElementById("search-term");
+            if (searchTermEl)
+                searchTermEl.textContent = searchInput ? `Results for "${searchInput}"` : "";
+        })
+        .catch(err => console.error("Error fetching board:", err));
+}
+
+function initBoardControls() {
+    const searchInput = document.getElementById("search");
+    if (searchInput)
+        searchInput.addEventListener("input", updateBoard);
+
+    ["priority-filter", "start-date", "end-date"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("change", updateBoard);
     });
 }
+
+document.addEventListener("DOMContentLoaded", initBoardControls);

@@ -17,15 +17,32 @@ Session(app)
 @app.route("/")
 @login_required
 def index():
-    query = request.args.get("search")
+    search = request.args.get("search", "").strip()
+    priority = request.args.get("priority")
+    start = request.args.get("start")
+    end = request.args.get("end")
 
-    if query:
-        tasks = get_searched_tasks(session["user_id"], query)
-    else:
-        tasks = get_tasks_by_user(session["user_id"])
-    
+    parameters = [session["user_id"]]
+    query = "SELECT * FROM tasks WHERE user_id = ? "
+
+    if search:
+        query += "AND (title LIKE ? OR description LIKE ?) "
+        like_search = f"%{search}%"
+        parameters.extend([like_search, like_search])
+
+    if priority:
+        query += "AND priority = ? "
+        parameters.append(priority)
+
+    if start and end:
+        query += "AND due_date BETWEEN ? AND ? "
+        parameters.extend([start, end])
+
+    query += "ORDER BY CASE WHEN due_date IS NULL THEN 1 ELSE 0 END, due_date ASC"
+
+    tasks = execute_filtered_query(query, parameters)
     subtasks = get_subtasks(session["user_id"])
-    
+
     return render_template("index.html", tasks=tasks, subtasks=subtasks)
 
 

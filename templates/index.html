@@ -12,10 +12,23 @@
         </header>
 
         <main>
-            <input type="text" id ="search" placeholder="Search tasks..." onclick="searchTasks()">
+            <input type="text" id ="search" placeholder="Search tasks...">
             {% if request.args.get('search') %}
                 <p>Results for "{{ request.args.get('search') }}"</p>
             {% endif %}
+
+            <div id="filters">
+                <select id="priority-filter">
+                    <option value="">All Priorities</option>
+                    <option value="low">Low Priority</option>
+                    <option value="medium">Medium Priority</option>
+                    <option value="high">High Priority</option>
+                </select>
+
+                <input type="date" id="start-date">
+                <input type="date" id="end-date">
+            </div>
+
             <section id="kanban-board">
                 <section id="todo-column" aria-labelledby="todo-heading" >
                     <h2 id="todo-heading">To Do</h2>
