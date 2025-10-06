@@ -15,7 +15,7 @@ function showMessage(message, isError = false) {
     setTimeout(() => div.remove(), 3000);
 }
 //drag tasks
-document.addEventListener("DOMContentLoaded", () => {
+function DragAndDrop() {
     const draggableTasks = document.querySelectorAll("[draggable='true']");
 
     draggableTasks.forEach(task => {
@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 .catch(err => console.error("Fetch error:", err));
         });
     });
-});
+}
 
 function generateTask(id) {
     var entry = { taskID: id };
@@ -149,6 +149,7 @@ function getNextTask() {
                 console.log("done");
 
                 task.scrollIntoView({behavior: "smooth", block: "center"});
+                refresh_event_listener();
             }
         })
         .catch(err => console.error("Error fetching next task:", err));
@@ -159,6 +160,7 @@ function getSummary() {
         .then(response => response.json())
         .then(data => {
             document.getElementById("summary-text").innerText = data.summary || "No summary yet.";
+            refresh_event_listener();
         })
         .catch(err => {
             console.error("Error fetching summary:", err);
@@ -178,7 +180,7 @@ function refreshSummary() {
         });
 }
 
-//written with some help from chatgpt
+// written with some help from chatgpt (in active fetching)
 function updateBoard() {
     const searchInput = document.getElementById("search").value.trim();
     const priority = document.getElementById("priority-filter").value;
@@ -199,10 +201,6 @@ function updateBoard() {
                 .querySelector("#kanban-board");
             if (newBoard)
                 document.querySelector("#kanban-board").innerHTML = newBoard.innerHTML;
-
-            const searchTermEl = document.getElementById("search-term");
-            if (searchTermEl)
-                searchTermEl.textContent = searchInput ? `Results for "${searchInput}"` : "";
         })
         .catch(err => console.error("Error fetching board:", err));
 }
@@ -218,4 +216,10 @@ function initBoardControls() {
     });
 }
 
+document.addEventListener("DOMContentLoaded", DragAndDrop);
 document.addEventListener("DOMContentLoaded", initBoardControls);
+
+function refresh_event_listener() {
+    document.addEventListener("DOMContentLoaded", DragAndDrop);
+    document.addEventListener("DOMContentLoaded", initBoardControls);
+}
