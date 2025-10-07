@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, jsonify, url_for, m
 from db import *
 from werkzeug.security import check_password_hash, generate_password_hash
 from kanbanAI import generate_subtasks, suggest_next_task, summarize_board
-from helpers import apology, login_required
+from helpers import apology, login_required, get_date_deatails
 from flask_session import Session
 
 # Configure application
@@ -43,7 +43,9 @@ def index():
     tasks = execute_filtered_query(query, parameters)
     subtasks = get_subtasks(session["user_id"])
 
-    return render_template("index.html", tasks=tasks, subtasks=subtasks)
+    today, after_tommorow = get_date_deatails()
+
+    return render_template("index.html", tasks=tasks, subtasks=subtasks, today=today, after_tommorow=after_tommorow)
 
 
 #not important routes
@@ -241,9 +243,7 @@ def register():
             return apology("must provide username", 400)
         
         email = request.form.get("email")
-        if not email:
-            return apology("must provide email", 400)
-        
+
         password = request.form.get("password")
         if not password:
             return apology("must provide password", 400)

@@ -66,6 +66,7 @@ function DragAndDrop() {
                         console.log(`Response status was not 200 ${response.status}`);
                         return;
                     }
+                    refresh_event_listener();
                     return response.json();
                 })
                 .then(data => {
@@ -127,6 +128,7 @@ function deleteTask(id) {
             if (task) task.remove();
 
             showMessage("Task deleted. Regresh the page if there are subtasks of it to be deleted");
+            refresh_event_listener();
             return response.json();
         })
         .then(data => {
@@ -201,6 +203,7 @@ function updateBoard() {
                 .querySelector("#kanban-board");
             if (newBoard)
                 document.querySelector("#kanban-board").innerHTML = newBoard.innerHTML;
+            refresh_event_listener();
         })
         .catch(err => console.error("Error fetching board:", err));
 }

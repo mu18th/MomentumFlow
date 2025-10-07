@@ -13,9 +13,6 @@
 
         <main>
             <input type="text" id ="search" placeholder="Search tasks...">
-            {% if request.args.get('search') %}
-                <p>Results for "{{ request.args.get('search') }}"</p>
-            {% endif %}
 
             <div id="filters">
                 <select id="priority-filter">
@@ -42,7 +39,14 @@
                                     <p>{{ task.description }}</p>
                                     <p>priority: {{ task.priority }}</p>
                                     {% if task.due_date is not none %}
-                                        <p>due on: {{ task.due_date }}</p>
+                                        {% if task.due_date < today%}
+                                            <p class="over_due">due on: {{ task.due_date }}</p>
+                                        {% elif task.due_date < after_tommorow%}
+                                            <p class="due_soon">due on: {{ task.due_date }}</p>
+                                        {% else %}
+                                            <p>due on: {{ task.due_date }}</p>
+                                        {% endif %}
+
                                     {% endif %}
 
                                     {% set ns = namespace(printed=false) %}
@@ -78,7 +82,14 @@
                                     <p>{{ task.description }}</p>
                                     <p>priority: {{ task.priority }}</p>
                                     {% if task.due_date is not none %}
-                                        <p>due on: {{ task.due_date }}</p>
+                                        {% if task.due_date < today%}
+                                            <p class="over_due">due on: {{ task.due_date }}</p>
+                                        {% elif task.due_date < after_tommorow%}
+                                            <p class="due_soon">due on: {{ task.due_date }}</p>
+                                        {% else %}
+                                            <p>due on: {{ task.due_date }}</p>
+                                        {% endif %}
+
                                     {% endif %}
 
                                     {% set ns = namespace(printed=false) %}
@@ -113,9 +124,6 @@
                                     <h3>{{ task.title }}</h3>
                                     <p>{{ task.description }}</p>
                                     <p>priority: {{ task.priority }}</p>
-                                    {% if task.due_date is not none %}
-                                        <p>due on: {{ task.due_date }}</p>
-                                    {% endif %}
                                     
                                     {% set ns = namespace(printed=false) %}
                                     <ol>

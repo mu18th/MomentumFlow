@@ -1,8 +1,8 @@
-#from CS50 finance task
 import requests
 
 from flask import redirect, request, render_template, session, url_for
 from functools import wraps
+from datetime import date, timedelta
 
 
 def apology(message, code=400):
@@ -22,3 +22,8 @@ def login_required(f):
             return redirect(url_for('login', next=request.url))
         return f(*args, **kwargs)
     return decorated_function
+
+def get_date_deatails():
+    today = date.today()
+    after_tomorrow = today + timedelta(days=2)
+    return today, after_tomorrow
