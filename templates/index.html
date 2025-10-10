@@ -27,124 +27,20 @@
             </div>
 
             <section id="kanban-board">
-                <section id="todo-column" aria-labelledby="todo-heading" >
-                    <h2 id="todo-heading">To Do</h2>
-                    <ol class = "task-list" id="To Do">
-                        <!-- empty cell to enable drag and drop -->
-                        <li style="background-color: #FFFFE0"></li>
-                        {% for task in tasks %}
-                            {% if task.status == 'To Do' %}
-                                <li id="{{ task.id }}" class="task" draggable="true">
-                                    <h3>{{ task.title }}</h3>
-                                    <p>{{ task.description }}</p>
-                                    <p>priority: {{ task.priority }}</p>
-                                    {% if task.due_date is not none %}
-                                        {% if task.due_date < today%}
-                                            <p class="over_due">due on: {{ task.due_date }}</p>
-                                        {% elif task.due_date < after_tommorow%}
-                                            <p class="due_soon">due on: {{ task.due_date }}</p>
-                                        {% else %}
-                                            <p>due on: {{ task.due_date }}</p>
-                                        {% endif %}
+                {% set column_id = "todo" %}
+                {% set column_title = "To Do" %}
+                {% set bg_color = "#FFFFE0" %}
+                {% include "_column.html" %}
 
-                                    {% endif %}
+                {% set column_id = "in-progress" %}
+                {% set column_title = "In Progress" %}
+                {% set bg_color = "#E0FFFF" %}
+                {% include "_column.html" %}
 
-                                    {% set ns = namespace(printed=false) %}
-                                    <ol>
-                                    {% for sub in subtasks %}
-                                        {% if sub.parent_id == task.id %}
-                                            {% if not ns.printed %}
-                                                <h6>SubTasks:</h6>
-                                                {% set ns.printed = true %}
-                                            {% endif %}
-                                            <li>{{ sub.title }}, {{ sub.status }}</li>
-                                        {% endif %}
-                                    {% endfor %}
-                                    </ol>
-                                    <button onclick="generateTask('{{ task.id}}')" id="sub-task">Generate 3 Subtasks</button>
-                                    <button onclick="deleteTask('{{ task.id }}')" id="delete-task">Delete Task</button>
-                                    <a href="{{ url_for('editTask', id=task.id) }}" id="update-task">Update Task</a>
-                                </li>
-                            {% endif %}
-                        {% endfor %}
-                    </ol>
-                </section>
-
-                <section id="in-progress-column"  aria-labelledby="in-progress-heading">
-                    <h2 id="in-progress-heading">In Progress</h2>
-                    <ol class = "task-list" id="In Progress">
-                        <!-- empty cell to enable drag and drop -->
-                        <li style="background-color: #E0FFFF"></li>
-                        {% for task in tasks %}
-                            {% if task.status == 'In Progress' %}
-                                <li id="{{ task.id }}" class="task" draggable="true">
-                                    <h3>{{ task.title }}</h3>
-                                    <p>{{ task.description }}</p>
-                                    <p>priority: {{ task.priority }}</p>
-                                    {% if task.due_date is not none %}
-                                        {% if task.due_date < today%}
-                                            <p class="over_due">due on: {{ task.due_date }}</p>
-                                        {% elif task.due_date < after_tommorow%}
-                                            <p class="due_soon">due on: {{ task.due_date }}</p>
-                                        {% else %}
-                                            <p>due on: {{ task.due_date }}</p>
-                                        {% endif %}
-
-                                    {% endif %}
-
-                                    {% set ns = namespace(printed=false) %}
-                                    <ol>
-                                    {% for sub in subtasks %}
-                                        {% if sub.parent_id == task.id %}
-                                            {% if not ns.printed %}
-                                                <h6>SubTasks:</h6>
-                                                {% set ns.printed = true %}
-                                            {% endif %}
-                                            <li>{{ sub.title }}, {{ sub.status }}</li>
-                                        {% endif %}
-                                    {% endfor %}
-                                    </ol>
-                                    <button onclick="generateTask('{{ task.id}}')" id="sub-task">Generate 3 Subtasks</button>
-                                    <button onclick="deleteTask('{{ task.id }}')" id="delete-task">Delete Task</button>
-                                    <a href="{{ url_for('editTask', id=task.id) }}" id="update-task">Update Task</a>
-                                </li>
-                            {% endif %}
-                        {% endfor %}
-                    </ol>
-                </section>
-
-                <section id="done-column" aria-labelledby="done-heading">
-                    <h2 id="done-heading">Done</h2>
-                    <ol class = "task-list" id="Done">
-                        <!-- empty cell to enable drag and drop -->
-                        <li style="background-color: #E0FFE0"></li>
-                        {% for task in tasks %}
-                            {% if task.status == 'Done' %}
-                                <li id="{{ task.id }}" class="task" draggable="true">
-                                    <h3>{{ task.title }}</h3>
-                                    <p>{{ task.description }}</p>
-                                    <p>priority: {{ task.priority }}</p>
-                                    
-                                    {% set ns = namespace(printed=false) %}
-                                    <ol>
-                                    {% for sub in subtasks %}
-                                        {% if sub.parent_id == task.id %}
-                                            {% if not ns.printed %}
-                                                <h6>SubTasks:</h6>
-                                                {% set ns.printed = true %}
-                                            {% endif %}
-                                            <li>{{ sub.title }}, {{ sub.status }}</li>
-                                        {% endif %}
-                                    {% endfor %}
-                                    </ol>
-                                    <button onclick="generateTask('{{ task.id}}')" id="sub-task">Generate 3 Subtasks</button>
-                                    <button onclick="deleteTask('{{ task.id }}')" id="delete-task">Delete Task</button>
-                                    <a href="{{ url_for('editTask', id=task.id) }}" id="update-task">Update Task</a>                  
-                                </li>
-                            {% endif %}
-                        {% endfor %}
-                    </ol>
-                </section>
+                {% set column_id = "done" %}
+                {% set column_title = "Done" %}
+                {% set bg_color = "#E0FFE0" %}
+                {% include "_column.html" %}
             </section>
             <div>
                 <p id="summary-text"></p>

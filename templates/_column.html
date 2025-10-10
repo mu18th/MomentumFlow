@@ -1,0 +1,46 @@
+<section id="{{ column_id }}-column">
+    <h2 id="{{ column_id }}-heading">{{ column_title }}</h2>
+    <ol class="task-list" id="{{ column_title }}">
+        <!-- empty cell to enable drag and drop -->
+        <li style="background-color: {{ bg_color }}"></li>
+
+        {% for task in tasks %}
+            {% if task.status == column_title %}
+                <li id="{{ task.id }}" class="task" draggable="true">
+                    <h3>{{ task.title }}</h3>
+                    <p>{{ task.description }}</p>
+                    <p>priority: {{ task.priority }}</p>
+
+                    {% if task.due_date is not none and task.status != 'Done' %}
+                        {% if task.due_date < today %}
+                            <p class="over_due">due on: {{ task.due_date }}</p>
+                        {% elif task.due_date < after_tommorow %}
+                            <p class="due_soon">due on: {{ task.due_date }}</p>
+                        {% else %}
+                            <p>due on: {{ task.due_date }}</p>
+                        {% endif %}
+                    {% endif %}
+
+                    {% set ns = namespace(printed=false) %}
+                    <ol>
+                        {% for sub in subtasks %}
+                            {% if sub.parent_id == task.id %}
+                                {% if not ns.printed %}
+                                    <h6>SubTasks:</h6>
+                                    {% set ns.printed = true %}
+                                {% endif %}
+                                <li>{{ sub.title }}, {{ sub.status }}</li>
+                            {% endif %}
+                        {% endfor %}
+                    </ol>
+
+                    {% if task.status != 'Done' %}
+                        <button onclick="generateTask('{{ task.id }}')" id="sub-task">Generate 3 Subtasks</button>
+                    {% endif %}
+                    <button onclick="deleteTask('{{ task.id }}')" id="delete-task">Delete Task</button>
+                    <a href="{{ url_for('editTask', id=task.id) }}" id="update-task">Update Task</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ol>
+</section>

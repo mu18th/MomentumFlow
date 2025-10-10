@@ -35,10 +35,12 @@ function DragAndDrop() {
             taskList.classList.remove("task-list--over");
         });
 
-        taskList.addEventListener("drop", e => {
+        taskList.addEventListener("drop", async e => {
             e.preventDefault();
             const droppedTaskId = e.dataTransfer.getData("text/plain");
             const droppedTask = document.getElementById(droppedTaskId);
+
+            const originalList = droppedTask.closest(".task-list");
 
             taskList.appendChild(droppedTask);
             taskList.classList.remove("task-list--over");
@@ -50,29 +52,44 @@ function DragAndDrop() {
 
             console.log(entry);
 
-            fetch(`${window.location.origin}/update-status`, {
-                method: "POST",
-                credentials: "include",
-                body: JSON.stringify(entry),
-                cache: "no-cache",
-                headers: new Headers({
-                    "content-type": "application/json"
-                })
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        alert("Failed to update task status.");
-                        location.reload(true);
-                        console.log(`Response status was not 200 ${response.status}`);
-                        return;
-                    }
-                    refresh_event_listener();
-                    return response.json();
-                })
-                .then(data => {
-                    console.log(data);
-                })
-                .catch(err => console.error("Fetch error:", err));
+            try {
+                const res = await fetch(`${window.location.origin}/update-status`, {
+                    method: "POST",
+                    credentials: "include",
+                    body: JSON.stringify(entry),
+                    cache: "no-cache",
+                    headers: { "content-type": "application/json" }
+                });
+
+                if (!res.ok) {
+                    alert("Failed to update task status.");
+
+                    if (originalList) originalList.appendChild(droppedTask);
+                    console.log(`Response not OK: ${res.status}`);
+                    return;
+                }
+
+                await res.json();
+
+                const ccolumnRes = await fetch(`/column/${entry.status}/html`);
+                if (!ccolumnRes) throw new Error("Faild to fetch column html");
+
+                const html = await ccolumnRes.text();
+                const newCol = new DOMParser()
+                    .parseFromString(html, "text/html")
+                    .querySelector(`#${entry.status}`);
+
+                if (newCol) {
+                    const oldCol = document.getElementById(entry.status);
+                    oldCol.innerHTML = newCol.innerHTML;
+                }
+
+                refresh_event_listener();
+
+                console.log(entry.status);
+            } catch(err) {
+                console.error("Fetch error:", err);
+            } 
         });
     });
 }

@@ -90,6 +90,11 @@ def get_subtasks(user_id):
         "SELECT * FROM tasks WHERE user_id = ? AND parent_id IS NOT NULL ORDER BY parent_id",
         (user_id,)).fetchall()
 
+def get_tasks_by_status(user_id, status):
+    db = get_db()
+    return db.execute(
+        "SELECT * FROM tasks WHERE user_id = ? AND status = ? ORDER BY parent_id",
+        (user_id,status)).fetchall()
 
 def get_tasks_notDone(user_id):
     db = get_db()

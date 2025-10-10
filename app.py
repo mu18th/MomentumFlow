@@ -130,6 +130,30 @@ def updateTaskStatus():
         
     return jsonify({"taskID": id, "status": status, "message": "updated"}), 200
     
+@app.route("/column/<string:status>/html")
+@login_required
+def column_html(status):
+    column_id = status    
+    if status == "todo":
+        column_title = "To Do"
+    elif status == "in-progress":
+        column_title = "In Progress"
+    else:
+        column_title = "Done"
+
+    tasks = get_tasks_by_status(session["user_id"], column_title)
+    subtasks = get_subtasks(session["user_id"])
+    today, after_tommorow = get_date_deatails()
+
+    return render_template(
+        "_column.html",
+        tasks=tasks,
+        subtasks=subtasks,
+        column_id=column_id,
+        column_title=column_title, 
+        today=today,
+        after_tommorow=after_tommorow
+    )
 
 @app.route("/next_task", methods=["GET"])
 @login_required
