@@ -3,6 +3,16 @@ from flask import g
 
 DATABASE = "instance/smart_kanban.db"
 
+
+oredr_state =  """ORDER BY
+                    CASE WHEN due_date IS NULL THEN 1 ELSE 0 END,
+                    due_date ASC,
+                    CASE priority
+                        WHEN 'high' THEN 1
+                        WHEN 'medium' THEN 2
+                        WHEN 'low' THEN 3
+                    END ASC;"""
+
 def get_db():
     if "db" not in g:
         g.db = sqlite3.connect(
@@ -67,21 +77,14 @@ def init_db():
 def get_tasks_by_user(user_id):
     db = get_db()
     return db.execute(
-        """SELECT * FROM tasks WHERE user_id = ? ORDER BY 
-        CASE WHEN due_date IS NULL THEN 1 ELSE 0 END, 
-        due_date ASC, 
-        CASE priority 
-            WHEN 'high' THEN 1 
-            WHEN 'medium' THEN 2 
-            WHEN 'low' THEN 3 
-        END ASC; 
+        f"""SELECT * FROM tasks WHERE user_id = ? {oredr_state} 
         """,(user_id,)).fetchall()
 
 
 def get_task_by_id(task_id):
     db = get_db()
     return db.execute(
-        "SELECT * FROM tasks WHERE id = ?", 
+        f"SELECT * FROM tasks WHERE id = ? {oredr_state}", 
         (task_id,)).fetchall()
 
 def get_subtasks(user_id):
@@ -93,23 +96,16 @@ def get_subtasks(user_id):
 def get_tasks_by_status(user_id, status):
     db = get_db()
     return db.execute(
-        "SELECT * FROM tasks WHERE user_id = ? AND status = ? ORDER BY parent_id",
+        f"SELECT * FROM tasks WHERE user_id = ? AND status = ? {oredr_state}",
         (user_id,status)).fetchall()
 
 def get_tasks_notDone(user_id):
     db = get_db()
-    return db.execute("""
+    return db.execute(f"""
         SELECT id, title, description, status, priority, due_date, parent_id
         FROM tasks
         WHERE user_id = ? AND status != 'Done'
-        ORDER BY
-            CASE WHEN due_date IS NULL THEN 1 ELSE 0 END,
-            due_date ASC,
-            CASE priority
-                WHEN 'high' THEN 1
-                WHEN 'medium' THEN 2
-                WHEN 'low' THEN 3
-            END ASC;
+        {oredr_state}
     """, (user_id,)).fetchall()
 
 def add_task(title, user_id, description, status, priority, due_date, parent_id=None):
