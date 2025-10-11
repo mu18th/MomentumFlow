@@ -259,7 +259,7 @@ def generateSubtasks():
 
     if subtasks == "Error":
         flash("Error generating subtasks, please try again later.")
-        return jsonify({"message": "could not generate tasks"}) , 400
+        return jsonify({"message": "could not generate tasks"}) , 500
     
     for task in subtasks:
         title = task.split()
