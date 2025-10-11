@@ -146,12 +146,12 @@ def update_status(status, task_id):
     db.commit()
 
 
-def update_task(id, title, description, priority, due_date):
+def update_task(id, title, description, status, priority, due_date):
     db = get_db()
 
     db.execute(
-        "UPDATE tasks SET title = ?, description = ?, priority = ?, due_date = ? WHERE id = ?",
-        (title, description, priority, due_date, id)
+        "UPDATE tasks SET title = ?, description = ?, status = ?, priority = ?, due_date = ? WHERE id = ?",
+        (title, description, status, priority, due_date, id)
     )
     db.commit()
 

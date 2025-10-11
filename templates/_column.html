@@ -6,7 +6,7 @@
 
         {% for task in tasks %}
             {% if task.status == column_title %}
-                <li id="{{ task.id }}" class="task" draggable="true">
+                <li id="{{ task.id }}" class="task" draggable="{{ 'true' if task.status != 'Done' else 'false' }}">
                     <h3>{{ task.title }}</h3>
                     <p>{{ task.description }}</p>
                     <p>priority: {{ task.priority }}</p>

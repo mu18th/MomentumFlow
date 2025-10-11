@@ -1,5 +1,5 @@
 
-// helper for messages, writen by chatgpt
+// helper for messages showing, written by chatgpt
 function showMessage(message, isError = false) {
     const div = document.createElement("div");
     div.textContent = message;
@@ -14,6 +14,33 @@ function showMessage(message, isError = false) {
     document.body.appendChild(div);
     setTimeout(() => div.remove(), 3000);
 }
+
+// helper for direct access to form throw keyboard, written by chatgpt
+document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("keydown", (e) => {
+        if (e.key.toLowerCase() === "f") {
+            e.preventDefault();
+
+            const hint = document.createElement("div");
+            hint.textContent = "Press F → Go to Add Task page";
+            hint.style.position = "fixed";
+            hint.style.top = "20px";
+            hint.style.right = "20px";
+            hint.style.background = "#007bff";
+            hint.style.color = "white";
+            hint.style.padding = "10px";
+            hint.style.borderRadius = "5px";
+            hint.style.zIndex = 1000;
+            document.body.appendChild(hint);
+
+            setTimeout(() => {
+                hint.remove();
+                window.location.href = "/addtask";
+            }, 800); 
+        }
+    });
+});
+
 //drag tasks
 function DragAndDrop() {
     const draggableTasks = document.querySelectorAll("[draggable='true']");
@@ -44,7 +71,7 @@ function DragAndDrop() {
 
             taskList.appendChild(droppedTask);
             taskList.classList.remove("task-list--over");
-
+            
             var entry = {
                 taskID: droppedTask.id,
                 status: taskList.id
@@ -84,7 +111,7 @@ function DragAndDrop() {
                     oldCol.innerHTML = newCol.innerHTML;
                 }
 
-                refresh_event_listener();
+                DragAndDrop();
 
                 console.log(entry.status);
             } catch(err) {
@@ -140,12 +167,11 @@ function deleteTask(id) {
                 console.error(`Response status was ${response.status}`);
                 return;
             }
-            // remove task element dynamically
             const task = document.getElementById(id);
             if (task) task.remove();
 
             showMessage("Task deleted. Regresh the page if there are subtasks of it to be deleted");
-            refresh_event_listener();
+            DragAndDrop();
             return response.json();
         })
         .then(data => {
@@ -168,7 +194,7 @@ function getNextTask() {
                 console.log("done");
 
                 task.scrollIntoView({behavior: "smooth", block: "center"});
-                refresh_event_listener();
+                DragAndDrop();
             }
         })
         .catch(err => console.error("Error fetching next task:", err));
@@ -179,7 +205,7 @@ function getSummary() {
         .then(response => response.json())
         .then(data => {
             document.getElementById("summary-text").innerText = data.summary || "No summary yet.";
-            refresh_event_listener();
+            DragAndDrop();
         })
         .catch(err => {
             console.error("Error fetching summary:", err);
@@ -199,7 +225,6 @@ function refreshSummary() {
         });
 }
 
-// written with some help from chatgpt (in active fetching)
 function updateBoard() {
     const searchInput = document.getElementById("search").value.trim();
     const priority = document.getElementById("priority-filter").value;
@@ -220,9 +245,10 @@ function updateBoard() {
                 .querySelector("#kanban-board");
             if (newBoard)
                 document.querySelector("#kanban-board").innerHTML = newBoard.innerHTML;
-            refresh_event_listener();
+            DragAndDrop();
         })
         .catch(err => console.error("Error fetching board:", err));
+
 }
 
 function initBoardControls() {
@@ -236,10 +262,10 @@ function initBoardControls() {
     });
 }
 
-document.addEventListener("DOMContentLoaded", DragAndDrop);
-document.addEventListener("DOMContentLoaded", initBoardControls);
+/*function refresh_event_listener() {
+    DragAndDrop;
+    initBoardControls;
+}*/
 
-function refresh_event_listener() {
-    document.addEventListener("DOMContentLoaded", DragAndDrop);
-    document.addEventListener("DOMContentLoaded", initBoardControls);
-}
+document.addEventListener("DOMContentLoaded", DragAndDrop);
+document.addEventListener("DOMContentLoaded", initBoardControls)

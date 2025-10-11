@@ -19,6 +19,12 @@
                     <label for="task-desc">Task Description</label>
                     <textarea autocomplete="off" autofocus name="description" id="task-desc">{{ task.description }}</textarea>
 
+                    <select name="status" id="task-status" required>
+                        <option value="To Do" {% if task.status == 'To Do' %}selected{% endif %}>To Do</option>
+                        <option value="In Progress" {% if task.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                        <option value="Done" {% if task.status == 'Done' %}selected{% endif %}>Done</option>
+                    </select>
+
                     <label for="task-priority">Priority</label>
                     <select name="priority" id="task-priority" value="{{ task.priority }}" required>
                         <option value="low" {% if task.priority == 'low' %}selected{% endif %}>Low</option>
@@ -27,7 +33,7 @@
                     </select>
 
                     <label for="due_date">Due Date</label>
-                    <input autocomplete="off" autofocus name="due_date" type="date" id="due_date" placeholder="{{ task.due_date }}">
+                    <input autocomplete="off" autofocus name="due_date" type="date" id="due_date" value="{{ task.due_date }}">
                     
                     <button type="submit">Update Task</button>
                 </form>

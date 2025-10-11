@@ -4,6 +4,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from kanbanAI import generate_subtasks, suggest_next_task, summarize_board
 from helpers import apology, login_required, get_date_deatails
 from flask_session import Session
+from urllib.parse import unquote
 
 # Configure application
 app = Flask(__name__)
@@ -133,24 +134,31 @@ def updateTaskStatus():
 @app.route("/column/<string:status>/html")
 @login_required
 def column_html(status):
-    column_id = status    
-    if status == "todo":
-        column_title = "To Do"
-    elif status == "in-progress":
-        column_title = "In Progress"
-    else:
-        column_title = "Done"
 
-    tasks = get_tasks_by_status(session["user_id"], column_title)
+    column_id = None
+    if status == "To Do":
+        column_id = "todo"
+        bg_color = "#FFFFE0"
+    elif status == "In Progress":
+        column_id = "in-progress"
+        bg_color = "#E0FFFF"
+    elif status == "Done":
+        column_id = "done"
+        bg_color = "#E0FFE0"
+    else:
+        return jsonify({"error": f"Invalid status: {status}"}), 400
+
+    tasks = get_tasks_by_user(session["user_id"])
     subtasks = get_subtasks(session["user_id"])
     today, after_tommorow = get_date_deatails()
 
     return render_template(
-        "_column.html",
+        "/_column.html",
         tasks=tasks,
         subtasks=subtasks,
         column_id=column_id,
-        column_title=column_title, 
+        column_title=status,
+        bg_color=bg_color,
         today=today,
         after_tommorow=after_tommorow
     )
@@ -211,11 +219,15 @@ def editTask(id):
         if not priority:
             return apology("must spacify priority", 400)
         
+        status =  request.form.get("status")
+        if not status:
+            return apology("must spacify status", 400)
+        
         due_date = request.form.get("due_date")
         if not due_date:
             due_date = None
 
-        update_task(id, title, description, priority, due_date)        
+        update_task(id, title, description, status, priority, due_date)        
 
 
         flash("Task updated!")
