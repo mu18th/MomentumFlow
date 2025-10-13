@@ -96,7 +96,13 @@ function DragAndDrop() {
                     return;
                 }
 
-                await res.json();
+                const data = await res.json();
+
+                if (entry.status === "Done" && data.subtask_ids && data.subtask_ids.length > 0) {
+                    alert("This task has subtasks. Press OK to refresh the page and update the board.")
+                    location.reload(true);
+                    return;
+                }
 
                 const ccolumnRes = await fetch(`/column/${entry.status}/html`);
                 if (!ccolumnRes) throw new Error("Faild to fetch column html");

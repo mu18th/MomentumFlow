@@ -126,10 +126,17 @@ def updateTaskStatus():
     status = task.get("status")
     if not status:
         return jsonify({"message": "not updated"}) , 400
-        
+    
+    if status == "Done":
+        subtasks = get_subtasks_by_parent(session["user_id"], id)
+
+        for t in subtasks:
+            update_status(status, int(t["id"]))
+
     update_status(status, id)
-        
-    return jsonify({"taskID": id, "status": status, "message": "updated"}), 200
+    
+    sub_ids = [sub["id"] for sub in subtasks]
+    return jsonify({"taskID": id, "status": status, "subtask_ids": sub_ids, "message": "updated"}), 200
     
 @app.route("/column/<string:status>/html")
 @login_required
@@ -258,7 +265,6 @@ def generateSubtasks():
     subtasks = generate_subtasks(mainTask[0]["title"], mainTask[0]["description"])
 
     if subtasks == "Error":
-        flash("Error generating subtasks, please try again later.")
         return jsonify({"message": "could not generate tasks"}) , 500
     
     for task in subtasks:

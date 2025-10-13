@@ -23,15 +23,19 @@
 
                     {% set ns = namespace(printed=false) %}
                     <ol>
-                        {% for sub in subtasks %}
-                            {% if sub.parent_id == task.id %}
-                                {% if not ns.printed %}
-                                    <h6>SubTasks:</h6>
-                                    {% set ns.printed = true %}
+                        {% if task.status != 'Done' %}
+                            {% for sub in subtasks %}
+                                {% if sub.parent_id == task.id %}
+                                    {% if not ns.printed %}
+                                        <h6>SubTasks:</h6>
+                                        {% set ns.printed = true %}
+                                    {% endif %}
+                                    <li>{{ sub.title }}, {{ sub.status }}</li>
                                 {% endif %}
-                                <li>{{ sub.title }}, {{ sub.status }}</li>
-                            {% endif %}
-                        {% endfor %}
+                            {% endfor %}
+                        {% else %}
+                            <h6>✅ All subtasks complete</h6>
+                        {% endif %}
                     </ol>
 
                     {% if task.status != 'Done' %}
