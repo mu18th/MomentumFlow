@@ -22,20 +22,26 @@
                     {% endif %}
 
                     {% set ns = namespace(printed=false) %}
+                    {% set ns = namespace(break_loop=False) %}
                     <ol>
-                        {% if task.status != 'Done' %}
-                            {% for sub in subtasks %}
+                        
+                        {% for sub in subtasks %}
+                            {% if not ns.break_loop %}                        
                                 {% if sub.parent_id == task.id %}
-                                    {% if not ns.printed %}
-                                        <h6>SubTasks:</h6>
-                                        {% set ns.printed = true %}
+                                    {% if task.status == 'Done' %}
+                                        <h6>✅ All subtasks complete</h6>
+                                        {% set ns.break_loop = true %}                                   
+                                    {% else %}
+                                        {% if not ns.printed %}
+                                            <h6>SubTasks:</h6>
+                                            {% set ns.printed = true %}
+                                        {% endif %}
+                                        <li>{{ sub.title }}, {{ sub.status }}</li>
                                     {% endif %}
-                                    <li>{{ sub.title }}, {{ sub.status }}</li>
                                 {% endif %}
-                            {% endfor %}
-                        {% else %}
-                            <h6>✅ All subtasks complete</h6>
-                        {% endif %}
+                            {% endif %}                        
+                        {% endfor %}
+                        
                     </ol>
 
                     {% if task.status != 'Done' %}
