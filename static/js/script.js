@@ -14,7 +14,7 @@ function showMessage(message, isError = false) {
     document.body.appendChild(div);
     setTimeout(() => div.remove(), 3000);
 }
-
+/*
 // helper for direct access to form throw keyboard, written by chatgpt
 document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("keydown", (e) => {
@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }, 800); 
         }
     });
-});
+});*/
 
 //drag tasks
 function DragAndDrop() {

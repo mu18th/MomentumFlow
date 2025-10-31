@@ -7,9 +7,6 @@
 
 
 {% block body %}
-        <header>
-            <h1>Smart Task Manager</h1>
-        </header>
 
         <main>
             <input type="text" id ="search" placeholder="Search tasks...">
@@ -29,19 +26,20 @@
             <section id="kanban-board">
                 {% set column_id = "todo" %}
                 {% set column_title = "To Do" %}
-                {% set bg_color = "#FFFFE0" %}
+                {% set bg_color = "var(--back-todo)" %}
                 {% include "_column.html" %}
 
                 {% set column_id = "in-progress" %}
                 {% set column_title = "In Progress" %}
-                {% set bg_color = "#E0FFFF" %}
+                {% set bg_color = "var(--back-progress)" %}
                 {% include "_column.html" %}
 
                 {% set column_id = "done" %}
                 {% set column_title = "Done" %}
-                {% set bg_color = "#E0FFE0" %}
+                {% set bg_color = "var(--back-done)" %}
                 {% include "_column.html" %}
             </section>
+            
             <div>
                 <p id="summary-text"></p>
                 <button id="summarize" onclick="getSummary()">Summarize the board</button>

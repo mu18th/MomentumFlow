@@ -1,0 +1,121 @@
+/*in css, I decide how the design will be and I used AI (gpt) for 2 things:
+1-to learn about css variables and how to use them with ageneral view of how css codes are structured conventionally
+2-to give me the colors codes (ex #0078d3) and some attributes handling like box-shadow, border-radius, etc
+but it did not write any of the codes of css*/
+:root {
+    /* === main palette === */
+    --primaray-color: #00b4d8;
+    --secondary-color: #0f172a;
+    --accent-color: #0ea5e9;
+    --success-color: #22c55e; 
+    --warning-color: #facc15;
+    --danger-color: #ef4444; 
+    --general-color: #64748b;
+
+    /* === backgrounds === */
+    --back-main: #0a0f1e;
+    --back-card: #273242;
+    --back-nav: #0a1126;
+
+    /* === column backgrounds === */
+    --backCol-todo: linear-gradient(135deg, #083b4f, #0f5670);
+    --backCol-progress: linear-gradient(135deg, #6f5610, #9a6a12);
+    --backCol-done: linear-gradient(135deg, #0d4b33, #177044);  
+
+    --border-todo: #3b82f6;
+    --border-progress: #f59e0b;
+    --border-done: #10b981;
+    /* === text === */
+    --text-main: #e2e8f0;
+    --text-light: #ffffff;
+    --text-gray: #94a3b8;
+
+    /* === borders and shadow === */
+    --border-color: #1e293b;
+    --shadow-strong: 0 8px 25px rgba(0, 255, 255, 0.12);
+    --shadow-soft: 0 4px 10px rgba(0, 255, 255, 0.06);
+
+    /* === radius === */
+    --radius-large: 14px;
+    --radius-medium: 10px;
+    --radius-small: 6px;
+    
+    /* === transitions === */
+    --trans-fast: 0.2s ease-in-out;
+    --trans-med: 0.4s ease-in-out;
+
+    /* === gradients === */
+    --primary-gradient: linear-gradient(145deg, #00b4d8, #0ea5e9);
+    --nav-gradient: linear-gradient(145deg, #0a1126, #0f1b35);
+    --card-gradient: linear-gradient(145deg, #0f172a, #1e293b);
+}
+
+body {
+    font-family: "Inter", "Segoe UI", Roboto, sans-serif;
+    background-color: var(--back-main);
+    color: var(--text-main);
+    margin: 0;
+    transition: background-color var(--trans-med);
+}
+
+nav {
+    background-color: var(--nav-gradient);
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    box-shadow: var(--shadow-strong);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.column {
+    border-radius: var(--radius-large);
+    padding: 1rem;
+    box-shadow: var(--shadow-soft);
+    min-height: 70vh;
+    box-shadow: var(--shadow-strong);
+
+}
+
+
+button {
+    background-color: var(--secondary-color);
+    color: var(--text-light);
+    border: none;
+    border-radius: var(--radius-medium);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background-color var(--trans-fast),
+                transform var(--trans-fast);
+}
+
+
+
+button:hover {
+    background-color: var(--accent-color);
+}
+
+.task-card {
+    background-color: var(--card-gradient);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-medium);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow-soft);
+    transition: transform var(--trans-fast),
+                box-shadow var(--trans-fast);
+}
+
+.task-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-strong);
+}
+
+footer {
+    background-color: var(--nav-gradient);
+    color: var(--text-light);
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.9rem;
+}

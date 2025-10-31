@@ -120,6 +120,9 @@ def updateTaskStatus():
     task = request.get_json()
 
     id = int(task.get("taskID"))
+
+    subtasks = get_subtasks_by_parent(session["user_id"], id)
+
     if not id:
         return jsonify({"message": "not updated"}) , 400
         
@@ -128,8 +131,6 @@ def updateTaskStatus():
         return jsonify({"message": "not updated"}) , 400
     
     if status == "Done":
-        subtasks = get_subtasks_by_parent(session["user_id"], id)
-
         for t in subtasks:
             update_status(status, int(t["id"]))
 
@@ -145,13 +146,10 @@ def column_html(status):
     column_id = None
     if status == "To Do":
         column_id = "todo"
-        bg_color = "#FFFFE0"
     elif status == "In Progress":
         column_id = "in-progress"
-        bg_color = "#E0FFFF"
     elif status == "Done":
         column_id = "done"
-        bg_color = "#E0FFE0"
     else:
         return jsonify({"error": f"Invalid status: {status}"}), 400
 
@@ -165,7 +163,7 @@ def column_html(status):
         subtasks=subtasks,
         column_id=column_id,
         column_title=status,
-        bg_color=bg_color,
+        bg_color = "var(--back-todo)" if status == "To Do" else ("var(--back-progress)" if status == "In Progress" else "var(--back-done)"),
         today=today,
         after_tommorow=after_tommorow
     )
@@ -285,6 +283,9 @@ def register():
             return apology("must provide username", 400)
         
         email = request.form.get("email")
+
+        if not email:
+            email = ""
 
         password = request.form.get("password")
         if not password:
