@@ -14,15 +14,15 @@ function showMessage(message, isError = false) {
     document.body.appendChild(div);
     setTimeout(() => div.remove(), 3000);
 }
-/*
+
 // helper for direct access to form throw keyboard, written by chatgpt
 document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("keydown", (e) => {
-        if (e.key.toLowerCase() === "f") {
+        if (e.key.toLowerCase() === "+") {
             e.preventDefault();
 
             const hint = document.createElement("div");
-            hint.textContent = "Press F → Go to Add Task page";
+            hint.textContent = "Press + → Go to Add Task page";
             hint.style.position = "fixed";
             hint.style.top = "20px";
             hint.style.right = "20px";
@@ -39,10 +39,12 @@ document.addEventListener("DOMContentLoaded", () => {
             }, 800); 
         }
     });
-});*/
+});
 
-//drag tasks
 function DragAndDrop() {
+    /* Drag and Drop: method that give the ability to grap and drop tasks and refresh the board after dropping */
+
+    //Drap part
     const draggableTasks = document.querySelectorAll("[draggable='true']");
 
     draggableTasks.forEach(task => {
@@ -53,15 +55,18 @@ function DragAndDrop() {
 
     const taskLists = document.querySelectorAll(".task-list");
     taskLists.forEach(taskList => {
+        // effect showing when dragging over a column
         taskList.addEventListener("dragover", e => {
             e.preventDefault();
             taskList.classList.add("task-list--over");
         });
 
+        // remove effect
         taskList.addEventListener("dragleave", () => {
             taskList.classList.remove("task-list--over");
         });
 
+        // Drop part
         taskList.addEventListener("drop", async e => {
             e.preventDefault();
             const droppedTaskId = e.dataTransfer.getData("text/plain");
@@ -72,6 +77,7 @@ function DragAndDrop() {
             taskList.appendChild(droppedTask);
             taskList.classList.remove("task-list--over");
             
+            // Data to be send to the route
             var entry = {
                 taskID: droppedTask.id,
                 status: taskList.id
@@ -79,6 +85,7 @@ function DragAndDrop() {
 
             console.log(entry);
 
+            // Updating part
             try {
                 const res = await fetch(`${window.location.origin}/update-status`, {
                     method: "POST",
@@ -96,14 +103,17 @@ function DragAndDrop() {
                     return;
                 }
 
+                
                 const data = await res.json();
 
+                // if moved to done and has subtasks, move sub tasks with their father
                 if (entry.status === "Done" && data.subtask_ids && data.subtask_ids.length > 0) {
                     alert("This task has subtasks. Press OK to refresh the page and update the board.")
                     location.reload(true);
                     return;
                 }
 
+                // update the board if not 
                 const ccolumnRes = await fetch(`/column/${entry.status}/html`);
                 if (!ccolumnRes) throw new Error("Faild to fetch column html");
 
@@ -117,6 +127,7 @@ function DragAndDrop() {
                     oldCol.innerHTML = newCol.innerHTML;
                 }
 
+                // refresh the method to not lose the Drag and Drop ability
                 DragAndDrop();
 
                 console.log(entry.status);
@@ -128,6 +139,9 @@ function DragAndDrop() {
 }
 
 function generateTask(id) {
+    /*Generate Task method, connected to generate_subtasks route and Generate 3 subtasks btn
+      it is responsiable of the generating of subtasks using AI */
+    
     var entry = { taskID: id };
 
     fetch(`${window.location.origin}/generate_subtasks`, {
@@ -155,7 +169,11 @@ function generateTask(id) {
         .catch(err => console.error("Fetch error:", err));
 }
 
-function deleteTask(id) {
+function deleteTask(id) { 
+    /* deleteTaks method: it is connected to delete-task route and delete Task btn
+       it is responsiable of deleting a single tasks using given ID and it subtasks 
+       if exist (need a refresh to be shown in the board) */
+    
     var entry = { taskID: id };
 
     fetch(`${window.location.origin}/delete-task`, {
@@ -177,6 +195,7 @@ function deleteTask(id) {
             if (task) task.remove();
 
             showMessage("Task deleted. Regresh the page if there are subtasks of it to be deleted");
+            // refresh Drag and Drop 
             DragAndDrop();
             return response.json();
         })
@@ -187,6 +206,10 @@ function deleteTask(id) {
 }
 
 function getNextTask() {
+    /* a method connected to next_task route and (what should I do now?) btn, 
+       responsiable of chosing one tasks that is the most important in the exiting board 
+       through AI or a specific chosen order */
+    
     fetch("/next_task")
         .then(response => response.json())
         .then(data => {
@@ -200,6 +223,7 @@ function getNextTask() {
                 console.log("done");
 
                 task.scrollIntoView({behavior: "smooth", block: "center"});
+                // refresh Drag and Drop
                 DragAndDrop();
             }
         })
@@ -207,11 +231,16 @@ function getNextTask() {
 }
 
 function getSummary() {
+    /* a method connected to get_summary route and (Get Summary) btn,
+       responsiable of showing the last saved summary of the tasks in the DB 
+       and show it in the summary area under the board */
+
     fetch("/get_summary")
         .then(response => response.json())
         .then(data => {
-            document.getElementById("summary-text").innerText = data.summary || "No summary yet.";
+            document.getElementById("summary-text").innerText = data.summary || "No summary yet, click Refresh Summary to generate one.";
             document.getElementById("summary-text").classList.add("showin");
+            // refresh  Drag and Drop
             DragAndDrop();
         })
         .catch(err => {
@@ -221,6 +250,10 @@ function getSummary() {
 }
 
 function refreshSummary() {
+    /* a method connected to summary route and (Refresh Summary) btn,
+       responsiable of generating a summary of the existing tasks in the board 
+       through AI and show it in the summary area under the board */
+    
     fetch("/summary", { method: "POST" })
         .then(response => response.json())
         .then(data => {
@@ -233,6 +266,9 @@ function refreshSummary() {
 }
 
 function updateBoard() {
+    /* a method connected to the main route and responsiable of updating the board
+       according to the search input and filters (priority, start date, end date) */
+    
     const searchInput = document.getElementById("search").value.trim();
     const priority = document.getElementById("priority-filter").value;
     const start = document.getElementById("start-date").value;
@@ -252,6 +288,7 @@ function updateBoard() {
                 .querySelector("#kanban-board");
             if (newBoard)
                 document.querySelector("#kanban-board").innerHTML = newBoard.innerHTML;
+            // refresh Drag and Drop
             DragAndDrop();
         })
         .catch(err => console.error("Error fetching board:", err));
@@ -259,6 +296,8 @@ function updateBoard() {
 }
 
 function initBoardControls() {
+    /* a method that init the board controls: search input and filters */
+
     const searchInput = document.getElementById("search");
     if (searchInput)
         searchInput.addEventListener("input", updateBoard);
@@ -269,10 +308,6 @@ function initBoardControls() {
     });
 }
 
-/*function refresh_event_listener() {
-    DragAndDrop;
-    initBoardControls;
-}*/
-
+// Initialize Drag and Drop and Board Controls on DOMContentLoaded
 document.addEventListener("DOMContentLoaded", DragAndDrop);
 document.addEventListener("DOMContentLoaded", initBoardControls)
