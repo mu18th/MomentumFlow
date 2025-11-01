@@ -40,12 +40,13 @@
                 {% include "_column.html" %}
             </section>
             
-            <div>
-                <p id="summary-text"></p>
+            <p id="summary-text"></p>
+            <div id="underborad-btns">
+                <button id="next-task" onclick="getNextTask()">What should I do now?</button>
                 <button id="summarize" onclick="getSummary()">Summarize the board</button>
-                <button id="refresh" onclick="refreshSummary()">Refresh Summary</button>
+                <button id="refresh" onclick="refreshSummary()">Refresh Summary</button>          
             </div>
-            <button id="next-task-btn" onclick="getNextTask()">What should I do now?</button>
+
         </main>
 
 {% endblock %}

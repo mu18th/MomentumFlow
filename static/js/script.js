@@ -211,6 +211,7 @@ function getSummary() {
         .then(response => response.json())
         .then(data => {
             document.getElementById("summary-text").innerText = data.summary || "No summary yet.";
+            document.getElementById("summary-text").classList.add("showin");
             DragAndDrop();
         })
         .catch(err => {

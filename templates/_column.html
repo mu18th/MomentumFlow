@@ -44,14 +44,13 @@
                         
                     </ol>
                     
-                    {% if task.status != 'Done' %}
-                        <button onclick="generateTask('{{ task.id }}')" id="sub-task">Generate 3 Subtasks</button>
-                        <br>
-                    {% endif %}
-                    <button onclick="deleteTask('{{ task.id }}')" id="delete-task">Delete Task</button>
-                    
-                    <a href="{{ url_for('editTask', id=task.id) }}" id="update-task">Update Task</a>
-
+                    <div id="task-buttons">
+                        <button onclick="deleteTask('{{ task.id }}')" id="delete-task">Delete Task</button>
+                        {% if task.status != 'Done' %}
+                            <button onclick="generateTask('{{ task.id }}')" id="sub-task">Generate 3 Subtasks</button>
+                        {% endif %}
+                        <a href="{{ url_for('editTask', id=task.id) }}" id="update-task">Update Task</a>
+                    </div>
                     
                 </li>
             {% endif %}

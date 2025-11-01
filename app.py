@@ -189,6 +189,9 @@ def summarizeBoard():
 
     summary = summarize_board(tasks)
 
+    if summary.startswith("{") and summary.endswith("}"):
+        summary = summary[1:-1].strip()
+    
     add_summary(session["user_id"], summary)
 
     return jsonify({"summary": summary})

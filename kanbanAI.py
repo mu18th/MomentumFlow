@@ -114,7 +114,7 @@ def summarize_board(tasks):
     ]
 
     prompt = f"""
-        Summarize the following board in 1–2 sentences, focusing on what’s urgent or pending:
+        Summarize the following board in 1–2 sentences (max 3 sentences), focusing on what’s urgent or pending:
         {tasks_list}
     """
 

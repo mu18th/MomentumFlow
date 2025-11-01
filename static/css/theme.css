@@ -16,6 +16,7 @@ but it did not write any of the codes of css*/
     --back-main: #0a0f1e;
     --back-card: #273242;
     --back-nav: #0a1126;
+    --back-button: #1A2332;
 
     /* === column backgrounds === */
     --backCol-todo: linear-gradient(135deg, #083b4f, #0f5670);
@@ -48,6 +49,35 @@ but it did not write any of the codes of css*/
     --primary-gradient: linear-gradient(145deg, #00b4d8, #0ea5e9);
     --nav-gradient: linear-gradient(145deg, #0a1126, #0f1b35);
     --card-gradient: linear-gradient(145deg, #0f172a, #1e293b);
+
+    /* === button background and buttons hover === */
+    --back-update: #1E2F45;
+    --update-border-hover: #2C3F58;
+
+    --back-delete: #2A1E22;
+    --delete-border-hover: #3A262B;
+
+    --back-generate: #241E2C;
+    --generate-border-hover: #31263C;
+
+    /* === underboard buttons === */
+    --text-under-btn: #D6E0EA;
+    --border-under-btn: #233040;
+
+    --back-next-task: #0E3440;
+    --next-task-border-hover: #104350;
+
+    --back-summarize: #3D3112;
+    --summarize-border-hover: #4A3C17;
+
+    --back-refresh: #123826;
+    --refresh-border-hover: #17482F;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
@@ -69,20 +99,10 @@ nav {
     border-bottom: 1px solid var(--border-color);
 }
 
-.column {
-    border-radius: var(--radius-large);
-    padding: 1rem;
-    box-shadow: var(--shadow-soft);
-    min-height: 70vh;
-    box-shadow: var(--shadow-strong);
-
-}
-
-
 button {
-    background-color: var(--secondary-color);
-    color: var(--text-light);
-    border: none;
+    background-color: var(--back-button);
+    color: var(--text-gray);
+    border: 1px soft var(--border-color);
     border-radius: var(--radius-medium);
     padding: 0.5rem 1rem;
     cursor: pointer;
@@ -94,22 +114,6 @@ button {
 
 button:hover {
     background-color: var(--accent-color);
-}
-
-.task-card {
-    background-color: var(--card-gradient);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-medium);
-    padding: 1rem;
-    margin-bottom: 1rem;
-    box-shadow: var(--shadow-soft);
-    transition: transform var(--trans-fast),
-                box-shadow var(--trans-fast);
-}
-
-.task-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-strong);
 }
 
 footer {
