@@ -1,4 +1,3 @@
-
 // helper for messages showing, written by chatgpt
 function showMessage(message, isError = false) {
     const div = document.createElement("div");
@@ -15,7 +14,7 @@ function showMessage(message, isError = false) {
     setTimeout(() => div.remove(), 3000);
 }
 
-// helper for direct access to form throw keyboard, written by chatgpt
+// helper for direct access to form throw pressing + in the keyboard, written by chatgpt
 document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("keydown", (e) => {
         if (e.key.toLowerCase() === "+") {
@@ -258,6 +257,7 @@ function refreshSummary() {
         .then(response => response.json())
         .then(data => {
             document.getElementById("summary-text").innerText = data.summary || "No summary yet.";
+            document.getElementById("summary-text").classList.add("showin");
         })
         .catch(err => {
             console.error("Error refreshing summary:", err);

@@ -17,6 +17,7 @@ but it did not write any of the codes of css*/
     --back-card: #273242;
     --back-nav: #0a1126;
     --back-button: #1A2332;
+    --back-control: #132743;
 
     /* === column backgrounds === */
     --backCol-todo: linear-gradient(135deg, #083b4f, #0f5670);
@@ -33,6 +34,7 @@ but it did not write any of the codes of css*/
 
     /* === borders and shadow === */
     --border-color: #1e293b;
+    --search-border: rgba(255,255,255,0.09);
     --shadow-strong: 0 8px 25px rgba(0, 255, 255, 0.12);
     --shadow-soft: 0 4px 10px rgba(0, 255, 255, 0.06);
 
@@ -93,7 +95,7 @@ nav {
     color: var(--text-light);
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     padding: 1rem 2rem;
     box-shadow: var(--shadow-strong);
     border-bottom: 1px solid var(--border-color);
@@ -114,6 +116,11 @@ button {
 
 button:hover {
     background-color: var(--accent-color);
+}
+
+input[type="date"],
+select {
+    color-scheme: dark;
 }
 
 footer {

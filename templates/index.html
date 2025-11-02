@@ -9,9 +9,9 @@
 {% block body %}
 
         <main>
-            <input type="text" id ="search" placeholder="Search tasks...">
-
-            <div id="filters">
+            <div id="search-filters">
+                <input type="text" id ="search" placeholder="Search tasks...">
+            
                 <select id="priority-filter">
                     <option value="">All Priorities</option>
                     <option value="low">Low Priority</option>
@@ -19,7 +19,9 @@
                     <option value="high">High Priority</option>
                 </select>
 
+                <label for="start-date">From:</label>
                 <input type="date" id="start-date">
+                <label for="end-date">To:</label>
                 <input type="date" id="end-date">
             </div>
 
