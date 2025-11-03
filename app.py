@@ -288,7 +288,7 @@ def register():
         email = request.form.get("email")
 
         if not email:
-            email = ""
+            email = "empty email"
 
         password = request.form.get("password")
         if not password:

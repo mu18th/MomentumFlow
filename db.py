@@ -38,7 +38,7 @@ def init_db():
                 CREATE TABLE IF NOT EXISTS users(
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 username TEXT UNIQUE NOT NULL,
-                email TEXT UNIQUE NOT NULL,
+                email TEXT NOT NULL,
                 hash TEXT NOT NULL
                 )
             """)
