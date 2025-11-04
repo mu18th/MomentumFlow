@@ -78,6 +78,10 @@ but it did not write any of the codes of css*/
     /* === seleeted === */
     --back-selected: #1A2532;
     --border-selected: #00C3FF;
+
+    /* === form === */
+    --border-form: #509fa2;
+    --button-form: #368d90;
 }
 
 * {
@@ -133,4 +137,7 @@ footer {
     text-align: center;
     padding: 1rem;
     font-size: 0.9rem;
+    position: static;
+    bottom: 0;
+    width: 100%;
 }
