@@ -137,9 +137,11 @@ function DragAndDrop() {
     });
 }
 
-function generateTask(id) {
+function generateTask(id, btn) {
     /*Generate Task method, connected to generate_subtasks route and Generate 3 subtasks btn
       it is responsiable of the generating of subtasks using AI */
+    
+    btn.setAttribute("data-loading", "true");
     
     var entry = { taskID: id };
 
@@ -165,7 +167,8 @@ function generateTask(id) {
         .then(data => {
             if (data) console.log(data);
         })
-        .catch(err => console.error("Fetch error:", err));
+        .catch(err => console.error("Fetch error:", err))
+        .finally(() => btn.setAttribute("data-loading", "false"));
 }
 
 function deleteTask(id) { 
@@ -204,10 +207,12 @@ function deleteTask(id) {
         .catch(err => console.error("Fetch error:", err));
 }
 
-function getNextTask() {
+function getNextTask(btn) {
     /* a method connected to next_task route and (what should I do now?) btn, 
        responsiable of chosing one tasks that is the most important in the exiting board 
        through AI or a specific chosen order */
+    
+    btn.setAttribute("data-loading", "true");
     
     fetch("/next_task")
         .then(response => response.json())
@@ -226,7 +231,8 @@ function getNextTask() {
                 DragAndDrop();
             }
         })
-        .catch(err => console.error("Error fetching next task:", err));
+        .catch(err => console.error("Error fetching next task:", err))
+        .finally(() => btn.setAttribute("data-loading", "false"));
 }
 
 function getSummary() {
@@ -248,10 +254,12 @@ function getSummary() {
         });    
 }
 
-function refreshSummary() {
+function refreshSummary(btn) {
     /* a method connected to summary route and (Refresh Summary) btn,
        responsiable of generating a summary of the existing tasks in the board 
        through AI and show it in the summary area under the board */
+    
+    btn.setAttribute("data-loading", "true");
     
     fetch("/summary", { method: "POST" })
         .then(response => response.json())
@@ -262,7 +270,8 @@ function refreshSummary() {
         .catch(err => {
             console.error("Error refreshing summary:", err);
             document.getElementById("summary-text").innerText = "⚠️ Failed to generate summary.";
-        });
+        })
+        .finally(() => btn.setAttribute("data-loading", "false"));
 }
 
 function updateBoard() {

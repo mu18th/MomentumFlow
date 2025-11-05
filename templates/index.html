@@ -7,7 +7,6 @@
 
 
 {% block body %}
-
         <main>
             <div id="search-filters">
                 <input type="text" id ="search" placeholder="Search tasks...">
@@ -47,11 +46,9 @@
             
             <p id="summary-text"></p>
             <div id="underborad-btns">
-                <button id="next-task" onclick="getNextTask()">📥 What should I do now?</button>
+                <button id="next-task" data-loading="false" onclick="getNextTask(this)">📥 What should I do now?</button>
                 <button id="summarize" onclick="getSummary()">📄 Summarize the board</button>
-                <button id="refresh" onclick="refreshSummary()">🔄 Refresh Summary</button>          
+                <button id="refresh" data-loading="false" onclick="refreshSummary(this)">🔄 Refresh Summary</button>          
             </div>
-
         </main>
-
 {% endblock %}

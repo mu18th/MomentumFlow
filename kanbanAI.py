@@ -6,20 +6,25 @@ import re
 
 load_dotenv()
 
-def generate_subtasks(title: str, description: str) -> list[str]:
+def generate_subtasks(title: str, description: str):
 
     # prompt for the AI
     prompt = f"""
-    You are a project manager. Break the following task into exactly 3 subtasks.
-    Each subtask must start with an action verb and be a single, clear action item.
+    You are a project manager. Break the following task into exactly 3 actionable subtasks.
+    Each subtask must 
+    -begin with an action verb 
+    - be concise
+    - describe a clear action.
 
     Main Task Title = {title}
     Main Task Description = {description if description else "No description provided"}
     
-    Format: 
+    Output format (plain text only):
     (1) ...
     (2) ...
     (3) ...
+
+    Do NOT add extra commentary, bullet points, special tokens, or explanations.
     """
 
     # call the API and handle errors
@@ -38,9 +43,14 @@ def generate_subtasks(title: str, description: str) -> list[str]:
     
         # get content
         text_output = response.choices[0].message.content
+        text_output = re.sub(r"<[^>]+>", "", text_output)
 
         # clean data and save the important parts
-        lines = [line.strip(" -•123)") for line in text_output.split("\n") if line.strip()]
+        lines = [
+            re.sub(r"^[\s\-•\d\).]*", "", line).strip()
+            for line in text_output.split("\n")
+            if line.strip()
+        ]
         subtasks = lines[:3] # ensure exactly 3
 
         return subtasks  
@@ -67,8 +77,9 @@ def suggest_next_task(tasks):
     prompt = f"""
             You are a helpful AI project manager.
             Given the following tasks (id, title, description, status, priority, due_date), 
-            suggest which task I should work on next.
-            Reply with **only the task ID as a number**, nothing else.
+            suggest which task I should work on next. Consider urgency, priority.
+            Reply with ONLY the task ID as a number. Do not include explanations, text, symbols, JSON, or special tokens.
+            If multiple tasks are equally important, choose the one with the earliest due date.
 
             Tasks:
             {tasks_list}
@@ -89,6 +100,7 @@ def suggest_next_task(tasks):
         )
 
         raw_output = response.choices[0].message.content
+        raw_output = re.sub(r"<[^>]+>", "", raw_output)
 
         match = re.search(r"\d+", raw_output)
         return int(match.group(0))
@@ -114,7 +126,11 @@ def summarize_board(tasks):
     ]
 
     prompt = f"""
-        Summarize the following board in 1–2 sentences (max 3 sentences), focusing on what’s urgent or pending:
+        You are summarizing a task board. Write a concise summary in 1–2 sentences (maximum 3). 
+        Focus on what is urgent, pending, or blocked. Do NOT return bullet points, lists, JSON, or special tokens.
+        Output plain text only.
+
+        board data:
         {tasks_list}
     """
 
@@ -133,6 +149,8 @@ def summarize_board(tasks):
         )
 
         summary_text = response.choices[0].message.content.strip()
+        summary_text = re.sub(r"<[^>]+>", "", summary_text)
+        summary_text = summary_text.replace("▁", " ")
 
         return summary_text
     except Exception:

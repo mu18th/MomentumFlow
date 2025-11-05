@@ -9,27 +9,30 @@
                 <li id="{{ task.id }}" class="task-card" draggable="{{ 'true' if task.status != 'Done' else 'false' }}">
                     <h3>{{ task.title }}</h3>
                     <p>{{ task.description }}</p>
-                    <p id="priority-{{ task.priority }}">
-                        {{
-                            '🟥' if task.priority == 'high'
-                            else '🟩' if task.priority == 'low'
-                            else '🟧'
-                        }}
-                        Priority: {{ task.priority }}
-                    </p>
+                    
+                    {% if task.status != 'Done' %}
+                        <p id="priority-{{ task.priority }}">
+                            {{
+                                '🟥' if task.priority == 'high'
+                                else '🟩' if task.priority == 'low'
+                                else '🟧'
+                            }}
+                            Priority: {{ task.priority }}
+                        </p>
 
-                    {% if task.due_date is not none and task.status != 'Done' %}
-                        {% if task.due_date < today %}
-                            <p id="due_date" class="over_due">⛔ Due On: {{ task.due_date }}</p>
-                        {% elif task.due_date < after_tommorow %}
-                            <p id="due_date" class="due_soon">⏳ Due On: {{ task.due_date }}</p>
-                        {% else %}
-                            <p id="due_date">🕒 Due On: {{ task.due_date }}</p>
+                        {% if task.due_date is not none%}
+                            {% if task.due_date < today %}
+                                <p id="due_date" class="over_due">⛔ Due On: {{ task.due_date }}</p>
+                            {% elif task.due_date < after_tommorow %}
+                                <p id="due_date" class="due_soon">⏳ Due On: {{ task.due_date }}</p>
+                            {% else %}
+                                <p id="due_date">🕒 Due On: {{ task.due_date }}</p>
+                            {% endif %}
                         {% endif %}
                     {% endif %}
-
                     {% set ns = namespace(printed=false) %}
                     {% set ns = namespace(break_loop=False) %}
+
                     <ol>
                         
                         {% for sub in subtasks %}
@@ -50,15 +53,15 @@
                         {% endfor %}
                         
                     </ol>
-                    
+
                     <div id="task-buttons">
                         <button onclick="deleteTask('{{ task.id }}')" id="delete-task">🗑️ Delete Task</button>
                         {% if task.status != 'Done' %}
-                            <button onclick="generateTask('{{ task.id }}')" id="sub-task">🧠 Generate 3 Subtasks</button>
+                            <button id="sub-task" data-loading="false" onclick="generateTask('{{ task.id }}', this)">🧠 Generate 3 Subtasks</button>
                         {% endif %}
                         <a href="{{ url_for('editTask', id=task.id) }}" id="update-task">✏️ Update Task</a>
                     </div>
-                    
+
                 </li>
             {% endif %}
         {% endfor %}
