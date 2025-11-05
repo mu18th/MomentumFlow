@@ -6,7 +6,11 @@
 
 {% block body %}
     <main>
-        <h1>Sorry!</h1>
-        <p>{{ message }}</p>
+        <div id="apology">
+            <h1>Opps!</h1>
+            <p>{{ message }}</p>
+            <p>try again and ensure that you are following instructions as specified</p>
+            <button onclick="window.history.back()">Go Back</button>
+        </div>
     </main>
 {% endblock %}

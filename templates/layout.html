@@ -18,18 +18,20 @@
         <nav id="navbar">
             {% if session["username"] %}                
                 <ul>
-                    <li id="app-name">Smart Task Manager</li>
+                    <span id="app-name">Smart Task Manager</span>
                     <div id="nav-btns">
-                        <li><a href="/">Home</a></li>
-                        <li><a href="/addtask">Add Task</a></li>
-                        <li><a href="/logout">Log Out</a></li>
+                        <li><a href="/">🏠 Home</a></li>
+                        <li><a href="/addtask">➕ Add Task</a></li>
+                        <li><a href="/logout">🚪 Log Out</a></li>
                     </div>
                 </ul>
             {% else %}
                 <ul>
-                    <li style="float: center;">Smart Task Manager</li>
-                    <li><a href="/login">Log In</a></li>
-                    <li><a href="/register">Register</a></li>
+                    <span id="app-name">Smart Task Manager</span>
+                    <div id="nav-btns">
+                        <li><a href="/login">🔐 Log In</a></li>
+                        <li><a href="/register">Register</a></li>
+                    </div>
                 </ul>
             {% endif %}
         </nav>
@@ -41,11 +43,14 @@
             </div>
         {% endfor %}
 
-        {% block body %}{% endblock %}
+        <div id="body-content">
+            {% block body %}{% endblock %}
+        </div>
 
         <footer>
             &copy; 2025 Muath Alyoubi
         </footer>
     </body>
+
 </html>
     

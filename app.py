@@ -45,7 +45,6 @@ def index():
     subtasks = get_subtasks(session["user_id"])
 
     today, after_tommorow = get_date_deatails()
-
     return render_template("index.html", tasks=tasks, subtasks=subtasks, today=today, after_tommorow=after_tommorow)
 
 

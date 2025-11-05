@@ -20,23 +20,26 @@
                 </select>
 
                 <label for="start-date">From:</label>
-                <input type="date" id="start-date">
+                <input type="date" id="start-date" placeholder="From">
                 <label for="end-date">To:</label>
                 <input type="date" id="end-date">
             </div>
 
             <section id="kanban-board">
                 {% set column_id = "todo" %}
+                {% set column_emo = '📌' %}
                 {% set column_title = "To Do" %}
                 {% set bg_color = "var(--back-todo)" %}
                 {% include "_column.html" %}
 
                 {% set column_id = "in-progress" %}
+                {% set column_emo = '⚙️' %}
                 {% set column_title = "In Progress" %}
                 {% set bg_color = "var(--back-progress)" %}
                 {% include "_column.html" %}
 
                 {% set column_id = "done" %}
+                {% set column_emo = '✅' %}
                 {% set column_title = "Done" %}
                 {% set bg_color = "var(--back-done)" %}
                 {% include "_column.html" %}
@@ -44,9 +47,9 @@
             
             <p id="summary-text"></p>
             <div id="underborad-btns">
-                <button id="next-task" onclick="getNextTask()">What should I do now?</button>
-                <button id="summarize" onclick="getSummary()">Summarize the board</button>
-                <button id="refresh" onclick="refreshSummary()">Refresh Summary</button>          
+                <button id="next-task" onclick="getNextTask()">📥 What should I do now?</button>
+                <button id="summarize" onclick="getSummary()">📄 Summarize the board</button>
+                <button id="refresh" onclick="refreshSummary()">🔄 Refresh Summary</button>          
             </div>
 
         </main>

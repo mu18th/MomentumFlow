@@ -8,7 +8,7 @@ function showMessage(message, isError = false) {
     div.style.padding = "8px 12px";
     div.style.borderRadius = "6px";
     div.style.color = "#fff";
-    div.style.backgroundColor = isError ? "#e74c3c" : "#2ecc71";
+    div.style.backgroundColor = isError ? "#e74c3c" : "#2785aeff";
     div.style.zIndex = "9999";
     document.body.appendChild(div);
     setTimeout(() => div.remove(), 3000);

@@ -38,6 +38,7 @@ but it did not write any of the codes of css*/
     --shadow-strong: 0 8px 25px rgba(0, 255, 255, 0.12);
     --shadow-soft: 0 4px 10px rgba(0, 255, 255, 0.06);
 
+    --shadow-title: 0 8px 25px rgba(0, 255, 255, 0.25);
     /* === radius === */
     --radius-large: 14px;
     --radius-medium: 10px;
@@ -90,14 +91,6 @@ but it did not write any of the codes of css*/
     box-sizing: border-box;
 }
 
-body {
-    font-family: "Inter", "Segoe UI", Roboto, sans-serif;
-    background-color: var(--back-main);
-    color: var(--text-main);
-    margin: 0;
-    transition: background-color var(--trans-med);
-}
-
 nav {
     background-color: var(--nav-gradient);
     color: var(--text-light);
@@ -107,6 +100,27 @@ nav {
     padding: 1rem 2rem;
     box-shadow: var(--shadow-strong);
     border-bottom: 1px solid var(--border-color);
+}
+
+html, body {
+    font-family: "Inter", "Segoe UI", Roboto, sans-serif;
+    background-color: var(--back-main);
+    color: var(--text-main);
+    margin: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: background-color var(--trans-med);
+}
+
+header {
+    background-color: var(--nav-gradient);
+    text-align: center;
+    padding: 1.5rem;
+    margin-top: 5px;
+    color: var(--text-light);
+    border-radius: var(--radius-large);
+    box-shadow: var(--shadow-strong);
 }
 
 button {
@@ -133,11 +147,9 @@ select {
 
 footer {
     background-color: var(--nav-gradient);
-    color: var(--text-light);
+    color: var(--text-gray);
     text-align: center;
     padding: 1rem;
     font-size: 0.9rem;
-    position: static;
-    bottom: 0;
-    width: 100%;
+    margin-top: auto;
 }

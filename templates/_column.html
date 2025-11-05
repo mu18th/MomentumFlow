@@ -1,5 +1,5 @@
 <section id="{{ column_id }}-column" class="column">
-    <h2 id="{{ column_id }}-heading">{{ column_title }}</h2>
+    <h2 id="{{ column_id }}-heading">{{ column_title }}{{ column_emo}}</h2>
     <ol class="task-list" id="{{ column_title }}">
         <!-- empty cell to enable drag and drop -->
         <li style="background-color: {{ bg_color }}"></li>
@@ -9,15 +9,22 @@
                 <li id="{{ task.id }}" class="task-card" draggable="{{ 'true' if task.status != 'Done' else 'false' }}">
                     <h3>{{ task.title }}</h3>
                     <p>{{ task.description }}</p>
-                    <p id="priority-{{ task.priority }}">Priority: {{ task.priority }}</p>
+                    <p id="priority-{{ task.priority }}">
+                        {{
+                            '🟥' if task.priority == 'high'
+                            else '🟩' if task.priority == 'low'
+                            else '🟧'
+                        }}
+                        Priority: {{ task.priority }}
+                    </p>
 
                     {% if task.due_date is not none and task.status != 'Done' %}
                         {% if task.due_date < today %}
-                            <p id="due_date" class="over_due">Due On: {{ task.due_date }}</p>
+                            <p id="due_date" class="over_due">⛔ Due On: {{ task.due_date }}</p>
                         {% elif task.due_date < after_tommorow %}
-                            <p id="due_date" class="due_soon">Due On: {{ task.due_date }}</p>
+                            <p id="due_date" class="due_soon">⏳ Due On: {{ task.due_date }}</p>
                         {% else %}
-                            <p id="due_date">Due On: {{ task.due_date }}</p>
+                            <p id="due_date">🕒 Due On: {{ task.due_date }}</p>
                         {% endif %}
                     {% endif %}
 
@@ -45,11 +52,11 @@
                     </ol>
                     
                     <div id="task-buttons">
-                        <button onclick="deleteTask('{{ task.id }}')" id="delete-task">Delete Task</button>
+                        <button onclick="deleteTask('{{ task.id }}')" id="delete-task">🗑️ Delete Task</button>
                         {% if task.status != 'Done' %}
-                            <button onclick="generateTask('{{ task.id }}')" id="sub-task">Generate 3 Subtasks</button>
+                            <button onclick="generateTask('{{ task.id }}')" id="sub-task">🧠 Generate 3 Subtasks</button>
                         {% endif %}
-                        <a href="{{ url_for('editTask', id=task.id) }}" id="update-task">Update Task</a>
+                        <a href="{{ url_for('editTask', id=task.id) }}" id="update-task">✏️ Update Task</a>
                     </div>
                     
                 </li>
