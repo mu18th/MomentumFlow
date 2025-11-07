@@ -1,10 +1,12 @@
+"""I have created this file to seperate db logic from app logic and replace redundency with a method calls"""
+
 import sqlite3
 from flask import g
 
 DATABASE = "instance/smart_kanban.db"
 
-
-oredr_state =  """ORDER BY
+# ORDER is a constante indicate the oreder of returned quary
+ORDER =  """ORDER BY
                     CASE WHEN due_date IS NULL THEN 1 ELSE 0 END,
                     due_date ASC,
                     CASE priority
@@ -27,7 +29,8 @@ def close_db(e=None):
     db = g.pop("db", None)
     if db is not None:
         db.close()
-        
+
+       
 def init_db():
     try:
         with sqlite3.connect(DATABASE) as conn:
@@ -59,6 +62,7 @@ def init_db():
                 )
             """)
 
+            # create summaries table
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS summaries (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,            
@@ -73,55 +77,79 @@ def init_db():
     except sqlite3.Error as e:
         print(f"An error occurred while initializing the database: {e}")
 
+def execute_filtered_query(query, parameters):
+    db = get_db()
+    return db.execute(f"{query} {ORDER}", parameters).fetchall()
 
 def get_tasks_by_user(user_id):
     db = get_db()
+
     return db.execute(
-        f"""SELECT * FROM tasks WHERE user_id = ? {oredr_state} 
-        """,(user_id,)).fetchall()
+        f"SELECT * FROM tasks WHERE user_id = ? {ORDER}",
+        (user_id,)).fetchall()
 
 
 def get_task_by_id(task_id):
     db = get_db()
+
     return db.execute(
-        f"SELECT * FROM tasks WHERE id = ? {oredr_state}", 
+        f"SELECT * FROM tasks WHERE id = ? {ORDER}", 
         (task_id,)).fetchall()
 
 def get_subtasks(user_id):
     db = get_db()
+
     return db.execute(
-        "SELECT * FROM tasks WHERE user_id = ? AND parent_id IS NOT NULL ORDER BY parent_id",
+        f"SELECT * FROM tasks WHERE user_id = ? AND parent_id IS NOT NULL ORDER BY parent_id",
         (user_id,)).fetchall()
 
 def get_subtasks_by_parent(user_id, parent):
     db = get_db()
+
     return db.execute(
-        "SELECT id FROM tasks WHERE user_id = ? AND parent_id = ?",
+        f"SELECT id FROM tasks WHERE user_id = ? AND parent_id = ? {ORDER}",
         (user_id, parent)).fetchall()
 
 def get_tasks_by_status(user_id, status):
     db = get_db()
+
     return db.execute(
-        f"SELECT * FROM tasks WHERE user_id = ? AND status = ? {oredr_state}",
+        f"SELECT * FROM tasks WHERE user_id = ? AND status = ? {ORDER}",
         (user_id,status)).fetchall()
 
 def get_tasks_notDone(user_id):
     db = get_db()
+
     return db.execute(f"""
         SELECT id, title, description, status, priority, due_date, parent_id
         FROM tasks
         WHERE user_id = ? AND status != 'Done'
-        {oredr_state}
+        {ORDER}
     """, (user_id,)).fetchall()
+
+def get_summary(user_id):
+    db = get_db()
+    return db.execute(
+        "SELECT summary FROM summaries WHERE user_id = ? ORDER BY created_at DESC LIMIT 1",
+        (user_id,)
+    ).fetchone()
 
 def add_task(title, user_id, description, status, priority, due_date, parent_id=None):
     db = get_db()
+
     db.execute(
         "INSERT INTO tasks (title, user_id, description, status, priority, due_date, parent_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
         (title, user_id, description, status, priority, due_date, parent_id)
     )
     db.commit()
 
+def add_summary(user_id, summary):
+    db = get_db()
+    db.execute(
+        "INSERT INTO summaries (user_id, summary) VALUES (?, ?)",
+        (user_id, summary)
+    )
+    db.commit()
 
 def delete_task(user_id, task_id):
     db = get_db()
@@ -165,32 +193,38 @@ def register_user(username, email, password_hash):
         (username, email, password_hash)
     )
     db.commit()
-
-
+    
 def get_user_by_username(username):
     db = get_db()
     return db.execute(
-        "SELECT * FROM users WHERE username = ?", 
+        f"SELECT * FROM users WHERE username = ?", 
         (username,)).fetchall()
 
-def add_summary(user_id, summary):
-    db = get_db()
-    db.execute(
-        "INSERT INTO summaries (user_id, summary) VALUES (?, ?)",
-        (user_id, summary)
-    )
-    db.commit()
+# recursive methods throught db, not a fully db logic so I wrote comment for each
+def delete_subtasks_tree(user_id, task_id):
+    """recursive go through tree and delete subtasks if exists"""
 
-def get_summary(user_id):
-    db = get_db()
-    return db.execute(
-        "SELECT summary FROM summaries WHERE user_id = ? ORDER BY created_at DESC LIMIT 1",
-        (user_id,)
-    ).fetchone()
+    subtasks = get_subtasks_by_parent(user_id, task_id)
+    
+    for task in subtasks:
+        delete_subtasks_tree(user_id, int(task["id"]))
+        
+    # delete the task itself
+    delete_task(user_id, task_id)
 
-def execute_filtered_query(query, parameters):
-    db = get_db()
-    return db.execute(query, parameters).fetchall()
+def update_subtasks_tree(user_id, task_id, status):
+    """recursive go through tree and update subtasks if status = Done"""
 
+    if status != "Done":
+        update_status(status, task_id)
+        return
+    
+    subtasks = get_subtasks_by_parent(user_id, task_id)
+    for task in subtasks:
+        update_subtasks_tree(user_id, int(task["id"]), status)
+    
+    update_status("Done", task_id)
+
+# for test case
 if __name__ == "__main__":
     init_db()

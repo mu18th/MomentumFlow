@@ -6,7 +6,8 @@ from datetime import date, timedelta
 
 
 def apology(message, code=400):
-
+    """return the apology page an error occur and is not flashed"""
+    
     return render_template("apology.html", message=message), code
 
 def login_required(f):
@@ -24,6 +25,8 @@ def login_required(f):
     return decorated_function
 
 def get_date_deatails():
+    """return date of today and after tommorow when called"""
+
     today = date.today()
     after_tomorrow = today + timedelta(days=2)
     return today, after_tomorrow

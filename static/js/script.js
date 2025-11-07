@@ -106,7 +106,7 @@ function DragAndDrop() {
                 const data = await res.json();
 
                 // if moved to done and has subtasks, move sub tasks with their father
-                if (entry.status === "Done" && data.subtask_ids && data.subtask_ids.length > 0) {
+                if (entry.status === "Done" && data.subtasks) {
                     alert("This task has subtasks. Press OK to refresh the page and update the board.")
                     location.reload(true);
                     return;
@@ -195,7 +195,7 @@ function deleteTask(id) {
             }
             const task = document.getElementById(id);
             if (task) task.remove();
-
+            
             showMessage("Task deleted. Regresh the page if there are subtasks of it to be deleted");
             // refresh Drag and Drop 
             DragAndDrop();

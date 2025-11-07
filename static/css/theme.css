@@ -1,7 +1,10 @@
-/*in css, I decide how the design will be and I used AI (gpt) for 2 things:
-1-to learn about css variables and how to use them with ageneral view of how css codes are structured conventionally
-2-to give me the colors codes (ex #0078d3) and some attributes handling like box-shadow, border-radius, etc
-but it did not write any of the codes of css*/
+/*in css, I decide how the design will be (combined may way to design and more than 20 generated 
+pictures and themes from AI moduals, then I used AI (gpt specially) for 3 things:
+1- to learn about css variables and how to use them with ageneral view of how css codes are structured conventionally
+2- to give me the colors codes (ex #0078d3) and some attributes handling like box-shadow, border-radius, etc..
+3- to develop some styles during working like padding and how to indicate that the app is waiting for AI responds 
+---but it did not write any of the codes neither here nor in style.css---*/
+
 :root {
     /* === main palette === */
     --primaray-color: #00b4d8;
@@ -19,7 +22,7 @@ but it did not write any of the codes of css*/
     --back-button: #1A2332;
     --back-control: #132743;
 
-    /* === column backgrounds === */
+    /* === column backgrounds and borders === */
     --backCol-todo: linear-gradient(135deg, #083b4f, #0f5670);
     --backCol-progress: linear-gradient(135deg, #6f5610, #9a6a12);
     --backCol-done: linear-gradient(135deg, #0d4b33, #177044);  
@@ -27,7 +30,12 @@ but it did not write any of the codes of css*/
     --border-todo: #3b82f6;
     --border-progress: #f59e0b;
     --border-done: #10b981;
-    /* === text === */
+
+    /* === form === */
+    --border-form: #509fa2;
+    --button-form: #368d90;
+
+    /* === text colors === */
     --text-main: #e2e8f0;
     --text-light: #ffffff;
     --text-gray: #94a3b8;
@@ -37,8 +45,8 @@ but it did not write any of the codes of css*/
     --search-border: rgba(255,255,255,0.09);
     --shadow-strong: 0 8px 25px rgba(0, 255, 255, 0.12);
     --shadow-soft: 0 4px 10px rgba(0, 255, 255, 0.06);
-
     --shadow-title: 0 8px 25px rgba(0, 255, 255, 0.25);
+
     /* === radius === */
     --radius-large: 14px;
     --radius-medium: 10px;
@@ -53,7 +61,7 @@ but it did not write any of the codes of css*/
     --nav-gradient: linear-gradient(145deg, #0a1126, #0f1b35);
     --card-gradient: linear-gradient(145deg, #0f172a, #1e293b);
 
-    /* === button background and buttons hover === */
+    /* === borad button background === */
     --back-update: #1E2F45;
     --update-border-hover: #2C3F58;
 
@@ -79,12 +87,9 @@ but it did not write any of the codes of css*/
     /* === seleeted === */
     --back-selected: #1A2532;
     --border-selected: #00C3FF;
-
-    /* === form === */
-    --border-form: #509fa2;
-    --button-form: #368d90;
 }
 
+/* === general theme of app === */
 * {
     margin: 0;
     padding: 0;

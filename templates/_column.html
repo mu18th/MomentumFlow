@@ -39,7 +39,7 @@
                             {% if not ns.break_loop %}                        
                                 {% if sub.parent_id == task.id %}
                                     {% if task.status == 'Done' %}
-                                        <h6>✅ All subtasks complete</h6>
+                                        <h6>All subtasks complete ✅</h6>
                                         {% set ns.break_loop = true %}                                   
                                     {% else %}
                                         {% if not ns.printed %}

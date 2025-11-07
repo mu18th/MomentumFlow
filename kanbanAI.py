@@ -1,3 +1,7 @@
+"""here are the three functions that call AI to give the app features where each function role is 
+   explained in a variable named prompt (inspired from CS50x AI lecture)
+   limitation is that it is using free AI API for now"""
+
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -8,7 +12,6 @@ load_dotenv()
 
 def generate_subtasks(title: str, description: str):
 
-    # prompt for the AI
     prompt = f"""
     You are a project manager. Break the following task into exactly 3 actionable subtasks.
     Each subtask must 
@@ -41,17 +44,17 @@ def generate_subtasks(title: str, description: str):
             ]
         )
     
-        # get content
+        # get content, clean data and save the important parts
         text_output = response.choices[0].message.content
         text_output = re.sub(r"<[^>]+>", "", text_output)
 
-        # clean data and save the important parts
         lines = [
             re.sub(r"^[\s\-•\d\).]*", "", line).strip()
             for line in text_output.split("\n")
             if line.strip()
         ]
-        subtasks = lines[:3] # ensure exactly 3
+        # ensure exactly 3 subtasks and return
+        subtasks = lines[:3] 
 
         return subtasks  
 
@@ -62,6 +65,7 @@ def generate_subtasks(title: str, description: str):
 
 def suggest_next_task(tasks):
 
+    # specific data of given tasks to be sent to AI
     tasks_list = [
         {
             "id": t["id"],
@@ -99,13 +103,12 @@ def suggest_next_task(tasks):
             ]
         )
 
+        # get content, clean data and save the important parts, then return
         raw_output = response.choices[0].message.content
         raw_output = re.sub(r"<[^>]+>", "", raw_output)
 
         match = re.search(r"\d+", raw_output)
         return int(match.group(0))
-
-            
 
     except Exception as e:
         print("Error in suggest_next_task:", e)  
@@ -148,16 +151,17 @@ def summarize_board(tasks):
             ]
         )
 
+        # get content, clean data and save the important parts, then return
         summary_text = response.choices[0].message.content.strip()
         summary_text = re.sub(r"<[^>]+>", "", summary_text)
         summary_text = summary_text.replace("▁", " ")
 
         return summary_text
+    
     except Exception:
         return "⚠️ Could not generate summary right now."
 
-
-# test
+# test I used for functions to ensure it works
 if __name__ == "__main__":
     title = "Develop and launch a new company website"
     description = "The new website needs a modern framework, an e-commerce section, and a blog."
