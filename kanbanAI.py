@@ -7,8 +7,8 @@ from dotenv import load_dotenv
 from openai import OpenAI
 import re
 
-
-load_dotenv()
+env_path = os.path.join("MomentumFlow", ".env")
+load_dotenv(dotenv_path=env_path)
 
 def generate_subtasks(title: str, description: str):
 
@@ -63,7 +63,7 @@ def generate_subtasks(title: str, description: str):
         return "Error"
 
 
-def suggest_next_task(tasks):
+def suggest_next_task(tasks: list):
 
     # specific data of given tasks to be sent to AI
     tasks_list = [
@@ -115,7 +115,7 @@ def suggest_next_task(tasks):
         return None
 
 
-def summarize_board(tasks):
+def summarize_board(tasks: list):
     tasks_list = [
         {
             "id": t["id"],

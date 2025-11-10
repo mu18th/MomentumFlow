@@ -200,7 +200,7 @@ def get_user_by_username(username):
         f"SELECT * FROM users WHERE username = ?", 
         (username,)).fetchall()
 
-# recursive methods throught db, not a fully db logic so I wrote comment for each
+# recursive methods through db, not a sql cmds but they are db related
 def delete_subtasks_tree(user_id, task_id):
     """recursive go through tree and delete subtasks if exists"""
 

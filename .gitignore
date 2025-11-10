@@ -9,5 +9,12 @@ instance/
 __pycache__/
 .pyc
 
-# Ignore environment variables file
+# Ignore environment file
 .env
+
+# Ignore sessions
+flask_session/
+
+# Ignore vscode and venv
+.vscode/
+venv/
