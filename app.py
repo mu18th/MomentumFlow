@@ -4,7 +4,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from kanbanAI import generate_subtasks, suggest_next_task, summarize_board
 from helpers import apology, login_required, get_date_deatails
 from flask_session import Session
-from urllib.parse import unquote
+
 # Configure application
 app = Flask(__name__)
 
@@ -12,8 +12,9 @@ app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
+init_db()
+""" board routes """
 
-# index route
 @app.route("/")
 @login_required
 def index():
@@ -56,7 +57,47 @@ def index():
         after_tommorow=after_tommorow
     )
 
-#add task route
+ 
+@app.route("/column/<string:status>/html")
+@login_required
+def column_html(status):
+    """ function to update the whole column if a task droped on it, mainly for done column
+        because a btns (subtasks generator) and some details should not be shown on it 
+        like due-date, priority, subtasks"""
+    
+    column_id = None
+    if status == "To Do":
+        column_id = "todo"
+    elif status == "In Progress":
+        column_id = "in-progress"
+    elif status == "Done":
+        column_id = "done"
+    else:
+        return jsonify({"error": f"Invalid status: {status}"}), 400
+
+    bg_color = (
+        "var(--back-todo)" if status == "To Do"
+        else "var(--back-progress)" if status == "In Progress"
+        else "var(--back-done)"
+    )
+
+    tasks = get_tasks_by_user(session["user_id"])
+    subtasks = get_subtasks(session["user_id"])
+    today, after_tommorow = get_date_deatails()
+
+    return render_template(
+        "/_column.html",
+        tasks=tasks,
+        subtasks=subtasks,
+        column_id=column_id,
+        column_title=status,
+        bg_color=bg_color,
+        today=today,
+        after_tommorow=after_tommorow
+    )
+
+""" form routes """
+
 @app.route("/addtask",  methods=["GET", "POST"])
 @login_required
 def addtask():
@@ -90,7 +131,46 @@ def addtask():
         return redirect("/")
     else:
         return render_template("addtask.html")
- 
+
+@app.route("/<int:id>/edit", methods=["GET", "POST"])
+@login_required
+def editTask(id):
+    """a function to update any of the task data, show a form like the addtask form
+       useful for generated subtasks, can be accessed through a URL simmilar to a btn"""
+    
+    # if post call method, deal with data and update them in the quary, otherwise render the 
+    # if the call is valid, else flash a message for bad call
+    if request.method == "POST":
+        title = request.form.get("title")
+        if not title:
+            return apology("must provide task", 400)
+        
+        description = request.form.get("description")
+        if not description:
+            description = ""
+        
+        priority = request.form.get("priority")
+        if not priority:
+            return apology("must spacify priority", 400)
+        
+        status =  request.form.get("status")
+        if not status:
+            return apology("must spacify status", 400)
+        
+        due_date = request.form.get("due_date")
+        if not due_date:
+            due_date = None
+
+        update_task(id, title, description, status, priority, due_date)        
+
+        flash("Task updated!")
+        return redirect("/")
+    else:
+        task = get_task_by_id(id)
+        if len(task) != 1:
+            return redirect(url_for("index", msg="not your task"))        
+        return render_template("edittask.html", task=task[0])
+
 @app.route("/delete-task",  methods=["POST"])
 @login_required
 def deleteTask():
@@ -131,44 +211,8 @@ def updateTaskStatus():
     subtasks = True if get_subtasks_by_parent(session["user_id"], id) else False
 
     return jsonify({"taskID": id, "status": status, "subtasks": subtasks, "message": "updated"}), 200
-    
-@app.route("/column/<string:status>/html")
-@login_required
-def column_html(status):
-    """ function to update the whole column if a task droped on it, mainly for done column
-        because a btns (subtasks generator) and some details should not be shown on it 
-        like due-date, priority, subtasks"""
-    
-    column_id = None
-    if status == "To Do":
-        column_id = "todo"
-    elif status == "In Progress":
-        column_id = "in-progress"
-    elif status == "Done":
-        column_id = "done"
-    else:
-        return jsonify({"error": f"Invalid status: {status}"}), 400
 
-    bg_color = (
-        "var(--back-todo)" if status == "To Do"
-        else "var(--back-progress)" if status == "In Progress"
-        else "var(--back-done)"
-    )
-
-    tasks = get_tasks_by_user(session["user_id"])
-    subtasks = get_subtasks(session["user_id"])
-    today, after_tommorow = get_date_deatails()
-
-    return render_template(
-        "/_column.html",
-        tasks=tasks,
-        subtasks=subtasks,
-        column_id=column_id,
-        column_title=status,
-        bg_color=bg_color,
-        today=today,
-        after_tommorow=after_tommorow
-    )
+""" AI routes """
 
 @app.route("/generate_subtasks", methods=["POST"])
 @login_required
@@ -208,6 +252,10 @@ def nextTask():
 
     tasks = get_tasks_notDone(session["user_id"])
 
+    if not tasks:
+        flash("No Tasks Yet")
+        return jsonify({"summary": "No Tasks Yet"})
+    
     next_task_id = suggest_next_task(tasks)
 
     # if falls, return first in the list
@@ -225,6 +273,9 @@ def summarizeBoard():
     
     tasks = get_tasks_by_user(session["user_id"])
 
+    if not tasks:
+        return jsonify({"summary": "No Tasks Yet"})
+    
     summary = summarize_board(tasks)
 
     if summary.startswith("{") and summary.endswith("}"):
@@ -241,50 +292,16 @@ def getSummay():
     """a function return last saved summary in the board
        connected to "Summarize the board" btn"""
 
-    row = get_summary(session["user_id"])
+    try:
+        row = get_summary(session["user_id"])
+    except:
+        return jsonify({"summary": "No Tasks Yet"})
     
     summary_text = row["summary"] if row else None
     
     return jsonify({"summary": summary_text})
 
-@app.route("/<int:id>/edit", methods=["GET", "POST"])
-@login_required
-def editTask(id):
-    """a function to update any of the task data, show a form like the addtask form
-       useful for generated subtasks, can be accessed through a URL simmilar to a btn"""
-    
-    # if post call method, deal with data and update them in the quary, otherwise render the 
-    # if the call is valid, else flash a message for bad call
-    if request.method == "POST":
-        title = request.form.get("title")
-        if not title:
-            return apology("must provide task", 400)
-        
-        description = request.form.get("description")
-        if not description:
-            description = ""
-        
-        priority = request.form.get("priority")
-        if not priority:
-            return apology("must spacify priority", 400)
-        
-        status =  request.form.get("status")
-        if not status:
-            return apology("must spacify status", 400)
-        
-        due_date = request.form.get("due_date")
-        if not due_date:
-            due_date = None
-
-        update_task(id, title, description, status, priority, due_date)        
-
-        flash("Task updated!")
-        return redirect("/")
-    else:
-        task = get_task_by_id(id)
-        if len(task) != 1:
-            return redirect(url_for("index", msg="not your task"))        
-        return render_template("edittask.html", task=task[0])
+""" Register and logging forms"""
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
