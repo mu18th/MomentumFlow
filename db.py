@@ -3,7 +3,7 @@
 import sqlite3
 from flask import g
 
-DATABASE = "instance/smart_kanban.db"
+DATABASE = "instance/MomentumFlowAI.db"
 
 # ORDER is a constante indicate the oreder of returned quary
 ORDER =  """ORDER BY
