@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function DragAndDrop() {
-    /* Drag and Drop: method that give the ability to grap and drop tasks and refresh the board after dropping */
+    /* Drag and Drop function: method that give the ability to grap and drop tasks and refresh the board after dropping */
 
     //Drap part
     const draggableTasks = document.querySelectorAll("[draggable='true']");
@@ -138,7 +138,7 @@ function DragAndDrop() {
 }
 
 function generateTask(id, btn) {
-    /*Generate Task method, connected to generate_subtasks route and Generate 3 subtasks btn
+    /*Generate Task function, connected to generate_subtasks route and Generate 3 subtasks btn
       it is responsiable of the generating of subtasks using AI */
     
     btn.setAttribute("data-loading", "true");
@@ -172,7 +172,7 @@ function generateTask(id, btn) {
 }
 
 function deleteTask(id) { 
-    /* deleteTaks method: it is connected to delete-task route and delete Task btn
+    /* deleteTaks function: it is connected to delete-task route and delete Task btn
        it is responsiable of deleting a single tasks using given ID and it subtasks 
        if exist (need a refresh to be shown in the board) */
     
@@ -208,7 +208,7 @@ function deleteTask(id) {
 }
 
 function getNextTask(btn) {
-    /* a method connected to next_task route and (what should I do now?) btn, 
+    /* a function connected to next_task route and (what should I do now?) btn, 
        responsiable of chosing one tasks that is the most important in the exiting board 
        through AI or a specific chosen order */
     
@@ -236,7 +236,7 @@ function getNextTask(btn) {
 }
 
 function getSummary() {
-    /* a method connected to get_summary route and (Get Summary) btn,
+    /* a function connected to get_summary route and (Get Summary) btn,
        responsiable of showing the last saved summary of the tasks in the DB 
        and show it in the summary area under the board */
 
@@ -255,7 +255,7 @@ function getSummary() {
 }
 
 function refreshSummary(btn) {
-    /* a method connected to summary route and (Refresh Summary) btn,
+    /* a function connected to summary route and (Refresh Summary) btn,
        responsiable of generating a summary of the existing tasks in the board 
        through AI and show it in the summary area under the board */
     
@@ -275,7 +275,7 @@ function refreshSummary(btn) {
 }
 
 function updateBoard() {
-    /* a method connected to the main route and responsiable of updating the board
+    /* a function connected to the main route and responsiable of updating the board
        according to the search input and filters (priority, start date, end date) */
     
     const searchInput = document.getElementById("search").value.trim();
@@ -305,7 +305,7 @@ function updateBoard() {
 }
 
 function initBoardControls() {
-    /* a method that init the board controls: search input and filters */
+    /* a function that init the board controls: search input and filters */
 
     const searchInput = document.getElementById("search");
     if (searchInput)

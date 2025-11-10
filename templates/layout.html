@@ -16,9 +16,10 @@
 
     <body>
         <nav id="navbar">
-            {% if session["username"] %}                
+            <img src="{{ url_for('static', filename='img/logo.png') }}" id="logo">
+            <span id="app-name">MomentumFlow</span>
+            {% if session["username"] %}
                 <ul>
-                    <span id="app-name">Smart Task Manager</span>
                     <div id="nav-btns">
                         <li><a href="/">🏠 Home</a></li>
                         <li><a href="/addtask">➕ Add Task</a></li>
@@ -27,7 +28,6 @@
                 </ul>
             {% else %}
                 <ul>
-                    <span id="app-name">Smart Task Manager</span>
                     <div id="nav-btns">
                         <li><a href="/login">🔐 Log In</a></li>
                         <li><a href="/register">👤 Register</a></li>

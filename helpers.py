@@ -1,4 +1,4 @@
-import requests
+"""collection of functions that is not related to a specific logic, inspired by CS50 finance"""
 
 from flask import redirect, request, render_template, session, url_for
 from functools import wraps
