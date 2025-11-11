@@ -3,7 +3,7 @@
 import sqlite3
 from flask import g
 
-DATABASE = "instance/MomentumFlow.db"
+DATABASE = "MomentumFlow.db"
 
 # ORDER is a constante indicate the oreder of returned quary
 ORDER =  """ORDER BY
