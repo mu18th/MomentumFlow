@@ -4,7 +4,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from MomentumFlowAI import generate_subtasks, suggest_next_task, summarize_board
 from helpers import apology, login_required, get_date_deatails
 from flask_session import Session
-
+import os
 # Configure application
 app = Flask(__name__)
 
@@ -389,4 +389,4 @@ def logout():
     return redirect(url_for("login", msg="You have been logged out"))
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
