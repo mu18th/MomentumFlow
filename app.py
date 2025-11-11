@@ -12,6 +12,7 @@ app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
+init_db()
 
 """ board routes """
 
@@ -388,6 +389,5 @@ def logout():
     return redirect(url_for("login", msg="You have been logged out"))
 
 if __name__ == "__main__":
-    init_db()
     app.run(debug=True)
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
