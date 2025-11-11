@@ -13,6 +13,7 @@ from helpers import apology, login_required, get_date_deatails
 
 # Configure application
 app = Flask(__name__)
+init_db()
 app.teardown_appcontext(close_db)
 
 # Configure session to use filesystem (instead of signed cookies)
