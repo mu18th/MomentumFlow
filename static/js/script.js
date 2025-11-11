@@ -214,7 +214,7 @@ function getNextTask(btn) {
     
     btn.setAttribute("data-loading", "true");
     
-    fetch("/next_task")
+    fetch(`${window.location.origin}/next_task`)
         .then(response => response.json())
         .then(data => {
             document.querySelectorAll(".task").forEach(el => {
@@ -240,7 +240,7 @@ function getSummary() {
        responsiable of showing the last saved summary of the tasks in the DB 
        and show it in the summary area under the board */
 
-    fetch("/get_summary")
+    fetch(`${window.location.origin}/get_summary`)
         .then(response => response.json())
         .then(data => {
             document.getElementById("summary-text").innerText = data.summary || "No summary yet, click Refresh Summary to generate one.";
@@ -261,7 +261,7 @@ function refreshSummary(btn) {
     
     btn.setAttribute("data-loading", "true");
     
-    fetch("/summary", { method: "POST" })
+    fetch(`${window.location.origin}/summary`, { method: "POST" })
         .then(response => response.json())
         .then(data => {
             document.getElementById("summary-text").innerText = data.summary || "No summary yet.";
