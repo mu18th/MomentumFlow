@@ -296,7 +296,7 @@ def getSummay():
     try:
         row = get_summary(session["user_id"])
     except:
-        return jsonify({"summary": "No Tasks Yet"})
+        return jsonify({"summary": "No Summary Yet"})
     
     summary_text = row["summary"] if row else None
     
