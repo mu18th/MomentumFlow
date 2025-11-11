@@ -16,7 +16,7 @@
 
     <body>
         <nav id="navbar">
-            <img src="{{ url_for('static', filename='img/logo.png') }}" id="logo">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" id="logo" alt="">
             <span id="app-name">MomentumFlow</span>
             {% if session["username"] %}
                 <ul>
