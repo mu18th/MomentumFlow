@@ -4,7 +4,7 @@ import sqlite3
 from flask import g
 import os
 
-DATABASE = os.getenv("DATABASE_URL")
+DATABASE = os.getenv("DATABASE_URL", "/MomentumFlow.db")
 
 # ORDER is a constante indicate the oreder of returned quary
 ORDER =  """ORDER BY
@@ -33,6 +33,7 @@ def close_db(e=None):
 
        
 def init_db():
+    os.makedirs(os.path.dirname(DATABASE), exist_ok=True)
     try:
         with sqlite3.connect(DATABASE) as conn:
             cursor = conn.cursor()
