@@ -37,7 +37,6 @@ def close_db(e=None):
 
        
 def init_db():
-    os.makedirs(os.path.dirname(DATABASE), exist_ok=True)
     try:
         with sqlite3.connect(DATABASE) as conn:
             cursor = conn.cursor()
