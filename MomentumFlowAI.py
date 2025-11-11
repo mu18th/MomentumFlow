@@ -37,7 +37,7 @@ def generate_subtasks(title: str, description: str):
         api_key = os.getenv("OPENROUTER_API_KEY"),
         )
         response = client.chat.completions.create(
-            model="deepseek/deepseek-chat-v3.1:free",
+            model="openai/gpt-oss-20b:free",
             messages=[
                 {"role": "system", "content": "You are a helpful AI project manager."},
                 {"role": "user", "content": prompt}
@@ -96,7 +96,7 @@ def suggest_next_task(tasks: list):
         )
 
         response = client.chat.completions.create(
-            model="deepseek/deepseek-chat-v3.1:free",
+            model="openai/gpt-oss-20b:free",
             messages=[
                 {"role": "system", "content": "You are a helpful AI project manager."},
                 {"role": "user", "content": prompt}
@@ -144,7 +144,7 @@ def summarize_board(tasks: list):
         )
 
         response = client.chat.completions.create(
-            model="deepseek/deepseek-chat-v3.1:free",
+            model="openai/gpt-oss-20b:free",
             messages=[
                 {"role": "system", "content": "You are a helpful AI project manager."},
                 {"role": "user", "content": prompt}
