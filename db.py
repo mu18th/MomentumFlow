@@ -1,8 +1,12 @@
-"""I have created this file to seperate db logic from app logic and replace redundency with a method calls"""
+"""I have created this file to seperate db logic and sql commands from app logic 
+   and replace redundency with a method calls"""
 
-import sqlite3
-from flask import g
+# Standard library imports
 import os
+import sqlite3
+
+# Third-party imports
+from flask import g
 
 DATABASE = os.getenv("DATABASE_URL")
 
@@ -72,6 +76,7 @@ def init_db():
                 summary TEXT NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+                )
             """)
 
             conn.commit()

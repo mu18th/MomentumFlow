@@ -1,10 +1,16 @@
+# Standard library imports
+import os
+
+# Third-party imports
 from flask import Flask, render_template, request, redirect, jsonify, url_for, make_response, session, flash
-from db import *
+from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
+
+# Local application imports
+from db import *
 from MomentumFlowAI import generate_subtasks, suggest_next_task, summarize_board
 from helpers import apology, login_required, get_date_deatails
-from flask_session import Session
-import os
+
 # Configure application
 app = Flask(__name__)
 
@@ -12,8 +18,7 @@ app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
-init_db()
-
+app.teardown_appcontext(close_db)
 """ board routes """
 
 @app.route("/")

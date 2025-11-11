@@ -2,10 +2,13 @@
    explained in a variable named prompt (inspired from CS50x AI lecture)
    limitation is that it is using free AI API for now"""
 
+# Standard library imports
 import os
+import re
+
+# Third-party imports
 from dotenv import load_dotenv
 from openai import OpenAI
-import re
 
 env_path = os.path.join("MomentumFlow", ".env")
 load_dotenv(dotenv_path=env_path)

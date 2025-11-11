@@ -1,9 +1,11 @@
-"""collection of functions that is not related to a specific logic, inspired by CS50 finance"""
+"""collection of functions that is not related to a specific logic, inspired from CS50 finance"""
 
-from flask import redirect, request, render_template, session, url_for
-from functools import wraps
+# Standard library imports
 from datetime import date, timedelta
+from functools import wraps
 
+# Third-party imports
+from flask import redirect, request, render_template, session, url_for
 
 def apology(message, code=400):
     """return the apology page an error occur and is not flashed"""
