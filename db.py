@@ -8,7 +8,7 @@ import sqlite3
 # Third-party imports
 from flask import g
 
-DATABASE = os.getenv("DATABASE_URL")
+DATABASE = os.getenv("DATABASE_URL", "MomentumFlow.db")
 
 # ORDER is a constante indicate the oreder of returned quary
 ORDER =  """ORDER BY
