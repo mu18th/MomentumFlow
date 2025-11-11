@@ -118,7 +118,6 @@ def suggest_next_task(tasks: list):
 def summarize_board(tasks: list):
     tasks_list = [
         {
-            "id": t["id"],
             "title": t["title"],
             "description": t["description"],
             "status": t["status"],

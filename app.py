@@ -172,6 +172,8 @@ def editTask(id):
             return redirect(url_for("index", msg="not your task"))        
         return render_template("edittask.html", task=task[0])
 
+""" js routes """
+
 @app.route("/delete-task",  methods=["POST"])
 @login_required
 def deleteTask():
@@ -293,10 +295,8 @@ def getSummay():
     """a function return last saved summary in the board
        connected to "Summarize the board" btn"""
 
-    try:
-        row = get_summary(session["user_id"])
-    except:
-        return jsonify({"summary": "No Summary Yet"})
+    row = get_summary(session["user_id"])
+
     
     summary_text = row["summary"] if row else None
     
