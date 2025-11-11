@@ -214,22 +214,26 @@ function getNextTask(btn) {
     
     btn.setAttribute("data-loading", "true");
     
-    fetch(`${window.location.origin}/next_task`)
-        .then(response => response.json())
-        .then(data => {
-            document.querySelectorAll(".task").forEach(el => {
-                el.classList.remove("selected");
-            });
+    fetch("/next_task", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "{}"
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.querySelectorAll(".task").forEach(el => {
+            el.classList.remove("selected");
+        });
 
-            const task = document.getElementById(data.task_id);
-            if (task) {
-                task.classList.add("selected");
-                console.log("done");
+        const task = document.getElementById(data.task_id);
+        if (task) {
+            task.classList.add("selected");
+            console.log("done");
 
-                task.scrollIntoView({behavior: "smooth", block: "center"});
-                // refresh Drag and Drop
-                DragAndDrop();
-            }
+            task.scrollIntoView({behavior: "smooth", block: "center"});
+            // refresh Drag and Drop
+            DragAndDrop();
+        }
         })
         .catch(err => console.error("Error fetching next task:", err))
         .finally(() => btn.setAttribute("data-loading", "false"));
@@ -240,7 +244,7 @@ function getSummary() {
        responsiable of showing the last saved summary of the tasks in the DB 
        and show it in the summary area under the board */
 
-    fetch(`${window.location.origin}/get_summary`)
+    fetch("/get_summary")
         .then(response => response.json())
         .then(data => {
             document.getElementById("summary-text").innerText = data.summary || "No summary yet, click Refresh Summary to generate one.";
@@ -261,17 +265,21 @@ function refreshSummary(btn) {
     
     btn.setAttribute("data-loading", "true");
     
-    fetch(`${window.location.origin}/summary`, { method: "POST" })
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById("summary-text").innerText = data.summary || "No summary yet.";
-            document.getElementById("summary-text").classList.add("showin");
-        })
-        .catch(err => {
-            console.error("Error refreshing summary:", err);
-            document.getElementById("summary-text").innerText = "⚠️ Failed to generate summary.";
-        })
-        .finally(() => btn.setAttribute("data-loading", "false"));
+    fetch("/summary", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "{}"
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("summary-text").innerText = data.summary || "No summary yet.";
+        document.getElementById("summary-text").classList.add("showin");
+    })
+    .catch(err => {
+        console.error("Error refreshing summary:", err);
+        document.getElementById("summary-text").innerText = "⚠️ Failed to generate summary.";
+    })
+    .finally(() => btn.setAttribute("data-loading", "false"));
 }
 
 function updateBoard() {
