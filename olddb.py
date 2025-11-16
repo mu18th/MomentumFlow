@@ -1,5 +1,7 @@
 """I have created this file to seperate db logic and sql commands from app logic 
    and replace redundency with a method calls"""
+"""!!! this was my db until the deploying phase where I changed to PostgreSQL due to deployment need
+   All I did is change the commands syntax from sqlite syntax to PostgreSQL syntax !!!"""
 
 # Standard library imports
 import os
@@ -83,9 +85,11 @@ def init_db():
     except sqlite3.Error as e:
         print(f"An error occurred while initializing the database: {e}")
 
+
 def execute_filtered_query(query, parameters):
     db = get_db()
     return db.execute(f"{query} {ORDER}", parameters).fetchall()
+
 
 def get_tasks_by_user(user_id):
     db = get_db()
@@ -102,12 +106,14 @@ def get_task_by_id(task_id):
         f"SELECT * FROM tasks WHERE id = ? {ORDER}", 
         (task_id,)).fetchall()
 
+
 def get_subtasks(user_id):
     db = get_db()
 
     return db.execute(
         f"SELECT * FROM tasks WHERE user_id = ? AND parent_id IS NOT NULL ORDER BY parent_id",
         (user_id,)).fetchall()
+
 
 def get_subtasks_by_parent(user_id, parent):
     db = get_db()
@@ -116,12 +122,14 @@ def get_subtasks_by_parent(user_id, parent):
         f"SELECT id FROM tasks WHERE user_id = ? AND parent_id = ? {ORDER}",
         (user_id, parent)).fetchall()
 
+
 def get_tasks_by_status(user_id, status):
     db = get_db()
 
     return db.execute(
         f"SELECT * FROM tasks WHERE user_id = ? AND status = ? {ORDER}",
         (user_id,status)).fetchall()
+
 
 def get_tasks_notDone(user_id):
     db = get_db()
@@ -133,12 +141,14 @@ def get_tasks_notDone(user_id):
         {ORDER}
     """, (user_id,)).fetchall()
 
+
 def get_summary(user_id):
     db = get_db()
     return db.execute(
         "SELECT summary FROM summaries WHERE user_id = ? ORDER BY created_at DESC LIMIT 1",
         (user_id,)
     ).fetchone()
+
 
 def add_task(title, user_id, description, status, priority, due_date, parent_id=None):
     db = get_db()
@@ -152,6 +162,7 @@ def add_task(title, user_id, description, status, priority, due_date, parent_id=
     )
     db.commit()
 
+
 def add_summary(user_id, summary):
     db = get_db()
     db.execute(
@@ -159,6 +170,7 @@ def add_summary(user_id, summary):
         (user_id, summary)
     )
     db.commit()
+
 
 def delete_task(user_id, task_id):
     db = get_db()
@@ -168,6 +180,7 @@ def delete_task(user_id, task_id):
         (user_id, task_id))
     db.commit()
 
+
 def delete_subtasks(parent_id):
     db = get_db()
 
@@ -175,6 +188,7 @@ def delete_subtasks(parent_id):
         "DELETE FROM tasks WHERE parent_id = ?", 
         (parent_id,))
     db.commit()
+
 
 def update_status(status, task_id):
     db = get_db()
