@@ -257,7 +257,7 @@ def get_user_by_username(username):
 
     with db.cursor(row_factory=psycopg.rows.dict_row) as cur:
         cur.execute("SELECT * FROM users WHERE username = %s", (username,))
-        result = cur.fetchone()
+        result = cur.fetchall()
 
     return result
 

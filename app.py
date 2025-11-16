@@ -36,19 +36,19 @@ def index():
 
     # quary and parameters depends on user inputs for search and filter, if no, show all tasks
     parameters = [session["user_id"]]
-    query = "SELECT * FROM tasks WHERE user_id = ? "
+    query = "SELECT * FROM tasks WHERE user_id = %s "
 
     if search:
-        query += "AND (title LIKE ? OR description LIKE ?) "
+        query += "AND (title LIKE %s OR description LIKE %s) "
         like_search = f"%{search}%"
         parameters.extend([like_search, like_search])
 
     if priority:
-        query += "AND priority = ? "
+        query += "AND priority = %s "
         parameters.append(priority)
 
     if start and end:
-        query += "AND due_date BETWEEN ? AND ? "
+        query += "AND due_date BETWEEN %s AND %s "
         parameters.extend([start, end])
 
     # create queries
