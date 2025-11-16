@@ -253,6 +253,7 @@ def generateSubtasks():
     
     return jsonify({"taskID": id, "message": "updated"}), 200
 
+
 @app.route("/next_task", methods=["GET"])
 @login_required
 def nextTask():
@@ -386,6 +387,7 @@ def login():
             flash(msg)
         return render_template("login.html")
     
+
 @app.route("/logout")
 def logout():
     """a function to logthe user out and flash an indicate message"""
@@ -394,6 +396,7 @@ def logout():
     flash("Logged out successfully.")
 
     return redirect(url_for("login", msg="You have been logged out"))
+
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,16 +1,13 @@
-"""I have created this file to seperate db logic and sql commands from app logic 
-   and replace redundency with a method calls"""
 
 # Standard library imports
 import os
-import sqlite3
 
 # Third-party imports
+import psycopg
 from flask import g
 
-DATABASE = "MomentumFlow.db"
+DATABASE = os.getenv("DATABASE_URL")
 
-# ORDER is a constante indicate the oreder of returned quary
 ORDER =  """ORDER BY
                     CASE WHEN due_date IS NULL THEN 1 ELSE 0 END,
                     due_date ASC,
@@ -20,31 +17,30 @@ ORDER =  """ORDER BY
                         WHEN 'low' THEN 3
                     END ASC;"""
 
+
 def get_db():
     if "db" not in g:
-        g.db = sqlite3.connect(
-            DATABASE,
-            detect_types=sqlite3.PARSE_DECLTYPES,
-            check_same_thread=False  
-        )
-        g.db.row_factory = sqlite3.Row
+        g.db = psycopg.connect(DATABASE)
+        g.cur = g.db.cursor(row_factory=psycopg.rows.dict_row) 
+    
     return g.db
+
 
 def close_db(e=None):
     db = g.pop("db", None)
     if db is not None:
         db.close()
 
-       
+
 def init_db():
     try:
-        with sqlite3.connect(DATABASE) as conn:
-            cursor = conn.cursor()
+        with psycopg.connect(DATABASE) as conn:
+            cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
 
             # Create users table
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS users(
-                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                id SERIAL PRIMARY KEY,
                 username TEXT UNIQUE NOT NULL,
                 email TEXT NOT NULL,
                 hash TEXT NOT NULL
@@ -54,7 +50,7 @@ def init_db():
             # Create tasks table
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS tasks(
-                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                id SERIAL PRIMARY KEY,
                 title TEXT NOT NULL,
                 user_id INTEGER NOT NULL,
                 description TEXT,
@@ -70,7 +66,7 @@ def init_db():
             # create summaries table
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS summaries (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,            
+                id SERIAL PRIMARY KEY,          
                 user_id INTEGER NOT NULL,
                 summary TEXT NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -80,131 +76,190 @@ def init_db():
 
             conn.commit()
             print("Tables created successfully")
-    except sqlite3.Error as e:
+    except psycopg.Error as e:
         print(f"An error occurred while initializing the database: {e}")
+
 
 def execute_filtered_query(query, parameters):
     db = get_db()
-    return db.execute(f"{query} {ORDER}", parameters).fetchall()
+
+    with db.cursor(row_factory = psycopg.rows.dict_row) as cur:
+        cur.execute(f"{query} {ORDER}", parameters)
+        results = cur.fetchall()
+
+    return results
+
 
 def get_tasks_by_user(user_id):
     db = get_db()
 
-    return db.execute(
-        f"SELECT * FROM tasks WHERE user_id = ? {ORDER}",
-        (user_id,)).fetchall()
+    with db.cursor(row_factory=psycopg.rows.dict_row) as cur:
+        cur.execute(f"SELECT * FROM tasks WHERE user_id = %s {ORDER}",
+        (user_id,))
+        results = cur.fetchall()
+
+    return results
 
 
 def get_task_by_id(task_id):
     db = get_db()
 
-    return db.execute(
-        f"SELECT * FROM tasks WHERE id = ? {ORDER}", 
-        (task_id,)).fetchall()
+    with db.cursor(row_factory=psycopg.rows.dict_row) as cur:
+        cur.execute(f"SELECT * FROM tasks WHERE id = %s {ORDER}", 
+        (task_id,))
+        results = cur.fetchall()
+
+    return results
+
 
 def get_subtasks(user_id):
     db = get_db()
 
-    return db.execute(
-        f"SELECT * FROM tasks WHERE user_id = ? AND parent_id IS NOT NULL ORDER BY parent_id",
-        (user_id,)).fetchall()
+    with db.cursor(row_factory=psycopg.rows.dict_row) as cur:
+        cur.execute(f"SELECT * FROM tasks WHERE user_id = %s AND parent_id IS NOT NULL ORDER BY parent_id",
+        (user_id,))
+        results = cur.fetchall()
+
+    return results
+
 
 def get_subtasks_by_parent(user_id, parent):
     db = get_db()
 
-    return db.execute(
-        f"SELECT id FROM tasks WHERE user_id = ? AND parent_id = ? {ORDER}",
-        (user_id, parent)).fetchall()
+    with db.cursor(row_factory=psycopg.rows.dict_row) as cur:
+        cur.execute(f"SELECT id FROM tasks WHERE user_id = %s AND parent_id = %s {ORDER}",
+        (user_id, parent))
+        results = cur.fetchall()
+
+    return results
+
 
 def get_tasks_by_status(user_id, status):
     db = get_db()
 
-    return db.execute(
-        f"SELECT * FROM tasks WHERE user_id = ? AND status = ? {ORDER}",
-        (user_id,status)).fetchall()
+    with db.cursor(row_factory=psycopg.rows.dict_row) as cur:
+        cur.execute(f"SELECT * FROM tasks WHERE user_id = %s AND status = %s {ORDER}",
+        (user_id,status))
+        results = cur.fetchall()
+
+    return results
+
 
 def get_tasks_notDone(user_id):
     db = get_db()
 
-    return db.execute(f"""
+    with db.cursor(row_factory=psycopg.rows.dict_row) as cur:
+        cur.execute(f"""
         SELECT id, title, description, status, priority, due_date, parent_id
         FROM tasks
-        WHERE user_id = ? AND status != 'Done'
+        WHERE user_id = %s AND status != 'Done'
         {ORDER}
-    """, (user_id,)).fetchall()
+    """, (user_id,))
+        results = cur.fetchall()
+
+    return results
+
 
 def get_summary(user_id):
     db = get_db()
-    return db.execute(
-        "SELECT summary FROM summaries WHERE user_id = ? ORDER BY created_at DESC LIMIT 1",
-        (user_id,)
-    ).fetchone()
+
+    with db.cursor(row_factory=psycopg.rows.dict_row) as cur:
+        cur.execute("SELECT summary FROM summaries WHERE user_id = %s ORDER BY created_at DESC LIMIT 1",
+        (user_id,))
+        results = cur.fetchone()
+
+    return results
+
 
 def add_task(title, user_id, description, status, priority, due_date, parent_id=None):
     db = get_db()
 
-    db.execute(
-        "INSERT INTO tasks (title, user_id, description, status, priority, due_date, parent_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        (title, user_id, description, status, priority, due_date, parent_id)
-    )
-    db.commit()
+    with db.cursor(row_factory=psycopg.rows.dict_row) as cur:
+        cur.execute(
+            """
+            INSERT INTO tasks (title, user_id, description, status, priority, due_date, parent_id)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """,
+            (title, user_id, description, status, priority, due_date, parent_id)
+        )
+        db.commit()
+
 
 def add_summary(user_id, summary):
     db = get_db()
-    db.execute(
-        "INSERT INTO summaries (user_id, summary) VALUES (?, ?)",
-        (user_id, summary)
-    )
-    db.commit()
+
+    with db.cursor(row_factory=psycopg.rows.dict_row) as cur:
+        cur.execute(
+            "INSERT INTO summaries (user_id, summary) VALUES (%s, %s)",
+            (user_id, summary)
+        )
+        db.commit()
+
+
 
 def delete_task(user_id, task_id):
     db = get_db()
 
-    db.execute(
-        "DELETE FROM tasks WHERE user_id = ? AND id = ?", 
-        (user_id, task_id))
-    db.commit()
+    with db.cursor(row_factory=psycopg.rows.dict_row) as cur:
+        cur.execute(
+            "DELETE FROM tasks WHERE user_id = %s AND id = %s", 
+            (user_id, task_id)
+        )
+        db.commit()
+
 
 def delete_subtasks(parent_id):
     db = get_db()
 
-    db.execute(
-        "DELETE FROM tasks WHERE parent_id = ?", 
-        (parent_id,))
-    db.commit()
+    with db.cursor(row_factory=psycopg.rows.dict_row) as cur:
+        cur.execute(
+            "DELETE FROM tasks WHERE parent_id = %s", 
+            (parent_id,)
+        )
+        db.commit()
+
 
 def update_status(status, task_id):
     db = get_db()
 
-    db.execute(
-        "UPDATE tasks SET status = ? WHERE id = ?", 
-        (status, task_id))
-    db.commit()
+    with db.cursor(row_factory=psycopg.rows.dict_row) as cur:
+        cur.execute(
+            "UPDATE tasks SET status = %s WHERE id = %s", 
+            (status, task_id)
+        )
+        db.commit()
 
 
 def update_task(id, title, description, status, priority, due_date):
     db = get_db()
 
-    db.execute(
-        "UPDATE tasks SET title = ?, description = ?, status = ?, priority = ?, due_date = ? WHERE id = ?",
-        (title, description, status, priority, due_date, id)
-    )
-    db.commit()
+    with db.cursor(row_factory=psycopg.rows.dict_row) as cur:
+        cur.execute(
+            "UPDATE tasks SET title = %s, description = %s, status = %s, priority = %s, due_date = %s WHERE id = %s",
+            (title, description, status, priority, due_date, id)
+        )
+        db.commit()
 
 
 def register_user(username, email, password_hash):
     db = get_db()
-    db.execute(
-        "INSERT INTO users (username, email, hash) VALUES (?, ?, ?)",
-        (username, email, password_hash)
-    )
-    db.commit()
+
+    with db.cursor(row_factory=psycopg.rows.dict_row) as cur:
+        cur.execute(
+            "INSERT INTO users (username, email, hash) VALUES (%s, %s, %s)",
+            (username, email, password_hash)
+        )
+        db.commit()
+
     
 def get_user_by_username(username):
     db = get_db()
-    return db.execute(
-        f"SELECT * FROM users WHERE username = ?", 
-        (username,)).fetchall()
+
+    with db.cursor(row_factory=psycopg.rows.dict_row) as cur:
+        cur.execute("SELECT * FROM users WHERE username = %s", (username,))
+        result = cur.fetchone()
+
+    return result
 
 # recursive methods through db, not a sql cmds but they are db related
 def delete_subtasks_tree(user_id, task_id):
