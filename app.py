@@ -254,7 +254,7 @@ def generateSubtasks():
     return jsonify({"taskID": id, "message": "updated"}), 200
 
 
-@app.route("/next_task", methods=["GET"])
+@app.route("/next_task", methods=["POST"])
 @login_required
 def nextTask():
     """a function call AI to suggest a specific task that the user should work on, if AI failed: 
