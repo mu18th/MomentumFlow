@@ -91,6 +91,8 @@ pictures and themes from AI moduals, then I used AI (gpt specially) for 3 things
 
 /* === general theme of app === */
 * {
+    width: auto;
+    height: auto;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
