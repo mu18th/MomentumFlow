@@ -1,17 +1,29 @@
 # MomwntumFlow
 #### Video Demo:  <URL HERE>
+
 #### Description: 
 MomwntumFlow is a **simple Smart Task Manager** web application featuring a Kanban-style board helps users to organize their work efficiently.
 It allows users to manage tasks visually, drag and drop them between colmuns, and leverage AI-powered features to improve produactivity and reduce distractions.
 
+
+## Motivation
+MomentumFlow exists to help users overcome **task overload** and **decision fatigue** by combining a clear Kanban workflow with **AI-assisted task breakdown and prioritization**, allowing users to focus on what truly matters next.
+Compared to many feature-heavy task management apps, MomentumFlow intentionally keeps the experience **simple and user-friendly**. Overcomplicated interfaces often create friction and reduce productivity, which directly contradicts the core goal of the application: helping users maintain momentum without distraction.
+
+## Application Architecture
+MomentumFlow follows a modular Flask architecture where routing and application logic are handled in `app.py`, database interactions are isolated in `db.py`, AI interactions are encapsulated in `MomentumFlowAI.py`, and reusable utilities live in `helpers.py`. The frontend uses Jinja templates, JavaScript for interactivity, and a layered CSS system for theming and layout.
+
+
 ## Technologies Used
 * Flask
+* Jinja2
 * HTML5
 * CSS3
 * python3
 * JS
 * PostgreSQL
 * AI API
+
 
 ## Features
 * User authentication (register, login, logout)
@@ -31,7 +43,7 @@ It allows users to manage tasks visually, drag and drop them between colmuns, an
 * Secure sessions + protected API keys
 
 
-# Project Files 
+## Project Files 
 1. HTML templates
    - layout.htmlThe base template inherited by all other templates.
      It includes:
@@ -249,4 +261,21 @@ It allows users to manage tasks visually, drag and drop them between colmuns, an
       + **Apology page styling** for error handling pages.
 
 
+## Keyboard Shortcuts
+- **+** → Instantly navigate to the *Add Task* page.
 
+
+## Known Issus
+- The Kanban board is designd for **desktop and tablet screaens**; mobile responsiveness is intentionally out of scope.
+- AI API usage is **limited** due to external service constraints.
+- The application currently supports **dark mode only**.
+
+
+## Future Updates
+- **Integrated AI Model**: Build an AI engine within the app to assist with task management.
+- **Improved File Organization**: Separate complex files (scripts.js, style.css, app.py) for easier maintenance.
+- **Advanced AI Features**: (ex. ocus-mode assistance with task recommendations and selective notifications.)
+- **Light Mode Option**: Add the ability to switch between dark mode and the original white (light) mode.
+- **Email Notifications**: Implement notifications for task deadlines, updates, and reminders.
+- **Group Collaboration**: Enable shared tasks and group work for teams.
+- **Personalized AI Suggestions**: Provide task and workflow optimization suggestions based on user behavior.
