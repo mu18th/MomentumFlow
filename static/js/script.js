@@ -254,7 +254,7 @@ function getSummary() {
         })
         .catch(err => {
             console.error("Error fetching summary:", err);
-            document.getElementById("summary-text").innerText = "⚠️ Failed to load summary.";
+            document.getElementById("summary-text").innerText = "Failed to load summary.";
         });    
 }
 
@@ -277,7 +277,7 @@ function refreshSummary(btn) {
     })
     .catch(err => {
         console.error("Error refreshing summary:", err);
-        document.getElementById("summary-text").innerText = "⚠️ Failed to generate summary.";
+        document.getElementById("summary-text").innerText = "Failed to generate summary.";
     })
     .finally(() => btn.setAttribute("data-loading", "false"));
 }

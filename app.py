@@ -69,7 +69,7 @@ def index():
 @app.route("/column/<string:status>/html")
 @login_required
 def column_html(status):
-    """ function to update the whole column if a task droped on it, mainly for done column
+    """ A function to update the whole column if a task droped on it, mainly for done column
         because a btns (subtasks generator) and some details should not be shown on it 
         like due-date, priority, subtasks"""
     
@@ -109,7 +109,7 @@ def column_html(status):
 @app.route("/addtask",  methods=["GET", "POST"])
 @login_required
 def addtask():
-    """function connected to addtask form, get data of task from user and register it on db"""
+    """A function connected to addtask form, get data of task from user and register it on db"""
 
     # if post, register date if  and return user to the board, else reunder the page for the user (get call)
     if request.method == "POST":
@@ -143,7 +143,7 @@ def addtask():
 @app.route("/<int:id>/edit", methods=["GET", "POST"])
 @login_required
 def editTask(id):
-    """a function to update any of the task data, show a form like the addtask form
+    """A function to update any of the task data, show a form like the addtask form
        useful for generated subtasks, can be accessed through a URL simmilar to a btn"""
     
     # if post call method, deal with data and update them in the quary, otherwise render the 
@@ -184,7 +184,7 @@ def editTask(id):
 @app.route("/delete-task",  methods=["POST"])
 @login_required
 def deleteTask():
-    """function to delete task through post using Js (btn delete task), if updated is parent all subtasks
+    """A function to delete task through post using Js (btn delete task), if updated is parent all subtasks
        are deleted from the db and user is asked to refresh the page through showMessage Js"""
 
     task = request.get_json()
@@ -202,7 +202,7 @@ def deleteTask():
 @app.route("/update-status",  methods=["POST"])
 @login_required
 def updateTaskStatus():
-    """function to update status by post through Js (drag and drop), if updated is parent and is done
+    """A function to update status by post through Js (drag and drop), if updated is parent and is done
        all of its childs are moved to done column and refresh is forced in DragAndDrop method"""
     
     task = request.get_json()
@@ -355,7 +355,7 @@ def register():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    """a function to login a user to new session"""
+    """a function to authenticates the user and starts a new session."""
     session.clear()
 
     # if post try to retrive the data , if wrong data flash message (in same page), otherwise log user in
