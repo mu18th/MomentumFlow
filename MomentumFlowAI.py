@@ -18,7 +18,7 @@ def generate_subtasks(title: str, description: str):
     prompt = f"""
     You are a project manager. Break the following task into exactly 3 actionable subtasks.
     Each subtask must 
-    -begin with an action verb 
+    - begin with an action verb 
     - be concise
     - describe a clear action.
 
@@ -161,7 +161,7 @@ def summarize_board(tasks: list):
         return summary_text
     
     except Exception:
-        return "⚠️ Could not generate summary right now."
+        return "Could not generate summary right now."
 
 # test I used for functions to ensure it works
 if __name__ == "__main__":
