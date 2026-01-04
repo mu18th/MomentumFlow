@@ -8,7 +8,7 @@ from functools import wraps
 from flask import redirect, request, render_template, session, url_for
 
 def apology(message, code=400):
-    """return the apology page an error occur and is not flashed"""
+    """Return the apology page when an error occur and is not handeled"""
     
     return render_template("apology.html", message=message), code
 

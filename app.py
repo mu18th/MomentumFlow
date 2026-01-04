@@ -390,7 +390,7 @@ def login():
 
 @app.route("/logout")
 def logout():
-    """a function to logthe user out and flash an indicate message"""
+    """A function to Logs the user out, clears the session, and flashes a confirmation message."""
     session.clear()
 
     flash("Logged out successfully.")

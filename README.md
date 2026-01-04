@@ -1,8 +1,9 @@
-# MomwntumFlow
-#### Video Demo:  <URL HERE>
+# MomentumFlow
+#### Video Demo:   [URL](https://youtu.be/aoUvgBKRbd0?si=Sf5jgJ7SS2VbHv5H)
 
-#### Description: 
-MomwntumFlow is a **simple Smart Task Manager** web application featuring a Kanban-style board helps users to organize their work efficiently.
+#### Project in Githun: [URL](https://github.com/mu18th/MomentumFlow)
+#### Description:
+MomentumFlow is a **simple Smart Task Manager** web application featuring a Kanban-style board helps users to organize their work efficiently.
 It allows users to manage tasks visually, drag and drop them between colmuns, and leverage AI-powered features to improve produactivity and reduce distractions.
 
 
@@ -33,7 +34,7 @@ MomentumFlow follows a modular Flask architecture where routing and application 
 * Visual workfolw organization
 * Distinctive colors for columns, buttons, priority, deadlines
 * AI-generated **subtasks**, **summaries**, and **next-task suggestion**
-* Subtasks fully connected to their parent task 
+* Subtasks fully connected to their parent task
 * Task filtering and searching within the board
 * Buttons to update and delete tasks
 * Keyboard shorcut: press + to instatly add a task
@@ -43,7 +44,7 @@ MomentumFlow follows a modular Flask architecture where routing and application 
 * Secure sessions + protected API keys
 
 
-## Project Files 
+## Project Files
 1. HTML templates
    - layout.htmlThe base template inherited by all other templates.
      It includes:
@@ -61,7 +62,7 @@ MomentumFlow follows a modular Flask architecture where routing and application 
       This template uses _column.html to render tasks inside each board column.
 
    - _column.hrml:
-      A partial Jinja template responsible for rendering tasks within each Kanban column. 
+      A partial Jinja template responsible for rendering tasks within each Kanban column.
       It handles differences between task states:
        * **Done tasks display fewer details**, since completed tasks are less relevant in daily workflow.
        * **Done tasks are not draggable** by design
@@ -109,44 +110,44 @@ MomentumFlow follows a modular Flask architecture where routing and application 
     * Application configuration.
     * Session configuration using the filesystem.
     * 13 Routes with functions:
-      + **index(status)**: 
+      + **index(status)**:
         The main application page.
         Displays the Kanban board and handles task filtering and searching.
       + **column_html()**:
         Updates an entire column when a task is dropped into it (used mainly for the **Done** column).
         Certain buttons and task details (such as subtasks generation, due date, and priority) are hidden in this column.
-      + **addtask()**: 
+      + **addtask()**:
         Connected to the Add Task form.
         Receives task data from the user and stores it in the database.
-      + **editTask(id)**: 
+      + **editTask(id)**:
         Updates an existing task.
         Displays a form similar to the Add Task form and is especially useful for editing AI-generated subtasks.
         Can be accessed via a URL (similar to a button action).
-      + **deleteTask()**: 
+      + **deleteTask()**:
         Deletes a task using a POST request via JavaScript.
         If the deleted task is a parent task, all related subtasks are deleted from the database.
         The user is prompted to refresh the page using the showMessage JavaScript function.
       + **updateTaskStatus()**:
         Updates the task status via JavaScript (drag & drop).
         If a parent task is moved to **Done**, all its child tasks are automatically moved to **Done** as well, and a refresh is triggered in the DragAndDrop method.
-      + **generateSubtasks()**: 
+      + **generateSubtasks()**:
         Calls the AI to generate **three subtasks** for a selected task (breaking it into smaller steps).
         Connected to the **Generate 3 subtasks** button.
-      + **nextTask()**: 
+      + **nextTask()**:
         Calls the AI to suggest the most important task the user should work on next.
         If the AI fails, the system falls back to returning the highest-priority task from the database.
         Connected to the **What should I do now?** button.
-      + **summarizeBoard()**: 
+      + **summarizeBoard()**:
         Calls the AI to generate a summary of the current board state and stores it in the database.
         Connected to the **Refresh Summary** button.
-      + **getSummay()**: 
+      + **getSummay()**:
         Returns the last saved board summary from the database.
         Connected to the **Summarize the Board** button.
-      + **register()**: 
+      + **register()**:
         Registers a new user and stores their credentials securely in the users table.
       + **login()**:
         Authenticates the user and starts a new session.
-      + **logout()**: 
+      + **logout()**:
         Logs the user out, clears the session, and flashes a confirmation message.
 
    - MomentumFlowAI.py:
@@ -167,7 +168,7 @@ MomentumFlow follows a modular Flask architecture where routing and application 
 
    - db.py:
    A dedicated module that **separates database logic from application logic**, encapsulating all PostgreSQL queries and reducing redundancy by exposing reusable database methods.
-   
+
    This file centralizes all database access and contains **16 commands methods**, in addition to the following core utilities:
       + **get_db()**:
         Returns an active database connection for the current request context.
@@ -190,13 +191,13 @@ MomentumFlow follows a modular Flask architecture where routing and application 
         A decorator that protects routes by requiring the user to be logged in before accessing them.
       + **get_date_deatails()**:
         Returns date-related values which are **today’s date** and **the date after tomorrow**, used for handling **due-soon** and **overdue** task logic.
-         
+
 3. JS:
-   - **scripts.js**: 
+   - **scripts.js**:
      A client-side JavaScript file that handles all dynamic behaviors and interactions of the Kanban board.
      Each method is responsible for a specific UI or API-related logic.
 
-     It includes the following methods: 
+     It includes the following methods:
       + **showMessage(message, isError = false)**:
         Displays a temporary floating message to the user for success or error feedback.
       + **Keyboard shortcut (+ key handler)**:
