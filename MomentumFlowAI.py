@@ -1,6 +1,5 @@
 """here are the three functions that call AI to give the app features where each function role is 
-   explained in a variable named prompt (inspired from CS50x AI lecture)
-   limitation is that it is using free AI API for now"""
+   explained in a variable named prompt (inspired from CS50x AI lecture)"""
 
 # Standard library imports
 import os

@@ -1,8 +1,5 @@
-# MomwntumFlow
-#### Video Demo:  <URL HERE>
-
 #### Description: 
-MomwntumFlow is a **simple Smart Task Manager** web application featuring a Kanban-style board helps users to organize their work efficiently.
+MomentumFlow is a **simple Smart Task Manager** web application featuring a Kanban-style board helps users to organize their work efficiently.
 It allows users to manage tasks visually, drag and drop them between colmuns, and leverage AI-powered features to improve produactivity and reduce distractions.
 
 

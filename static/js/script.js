@@ -1,4 +1,4 @@
-// helper for messages showing, written by chatgpt
+// helper for messages showing
 function showMessage(message, isError = false) {
     const div = document.createElement("div");
     div.textContent = message;
@@ -14,7 +14,7 @@ function showMessage(message, isError = false) {
     setTimeout(() => div.remove(), 3000);
 }
 
-// helper for direct access to form throw pressing + in the keyboard, written by chatgpt
+// helper for direct access to form throw pressing + in the keyboard
 document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("keydown", (e) => {
         if (e.key.toLowerCase() === "+") {

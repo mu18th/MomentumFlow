@@ -1,4 +1,4 @@
-"""I have created this file to seperate db logic and sql commands from app logic 
+"""I have created this file to seperate db logic and PostgreSQL commands from app logic 
    and replace redundency with a method calls"""
 """!!! PostgreSQL db file, was writtin based on (olddb file) !!!"""
 

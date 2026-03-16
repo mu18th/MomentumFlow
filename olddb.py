@@ -1,6 +1,6 @@
 """I have created this file to seperate db logic and sql commands from app logic 
    and replace redundency with a method calls"""
-"""!!! this was my db until the deploying phase where I changed to PostgreSQL due to deployment need
+"""!!! this was the db until the deploying phase where I changed to PostgreSQL due to deployment requirments
    All I did is change the commands syntax from sqlite syntax to PostgreSQL syntax !!!"""
 
 # Standard library imports
